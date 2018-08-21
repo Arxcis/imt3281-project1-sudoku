@@ -3,6 +3,10 @@
   <groupId>project1</groupId>
   <artifactId>project1</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <configuration>
+    <source>1.8</source>
+    <target>1.8</target>
+  </configuration>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
@@ -10,9 +14,6 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.7.0</version>
-        <configuration>
-          <release>10</release>
-        </configuration>
       </plugin>
     </plugins>
   </build>
