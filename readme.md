@@ -4,5 +4,16 @@ Bjarte Klyve Larsen
 Per-Morten Straume
 Herman Tandberg Dybing
 
+Commit standard:
+```
+<issue_action> #(issue number): heading (empty line) explanatory body
+```
 
-Legg til navnene på deltakerne i gruppa i denne (readme.me) filen.
+Example:
+```
+ref #6: create standard
+
+Creating standard for commit messages.
+
+ref #7 #8
+```
