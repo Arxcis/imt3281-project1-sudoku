@@ -17,4 +17,28 @@ public class Sudoku {
             mSudokuBoard.add(new ArrayList<>(row));
         }
     }
+
+    /**
+     * Gets the element in the sudoku board located at the position indicated by row
+     * and col.
+     * 
+     * @param row The row containing the element.
+     * @param col The column containing the element.
+     * @return The element located at the position indicated by row and col.
+     */
+    protected int getElement(int row, int col) {
+        return mSudokuBoard.get(row).get(col);
+    }
+
+    /**
+     * Sets the element in the sudoku board located at the position indicated by row
+     * and col.
+     * 
+     * @param row   The row containing the element.
+     * @param col   The column containing the element.
+     * @param value The new value of the element.
+     */
+    protected void setElement(int row, int col, int value) {
+        mSudokuBoard.get(row).set(col, value);
+    }
 }
