@@ -55,7 +55,7 @@ public class SudokuController {
     
     
     public static Parent makeSceneRoot() throws IOException {
-		final String resourcePath = "./resources/sudoku.fxml";
+		final String resourcePath = "./resources/fxml/sudoku.fxml";
 		return FXMLLoader.load(SudokuController.class.getResource(resourcePath));
     }
 }
