@@ -15,10 +15,16 @@ public class Sudoku {
      * 
      * @param board The new board
      */
-    public Sudoku(final List<List<Integer>> board) {
+    /**
+     * Creates a new entirely empty Sudoku board. 
+     */
+    public Sudoku() {
         mSudokuBoard = new ArrayList<>();
-        for (var row : board) {
-            mSudokuBoard.add(new ArrayList<>(row));
+        for (int row = 0; row < ROW_SIZE; row++) {
+            mSudokuBoard.add(new ArrayList<>());
+            for (int col = 0; col < COL_SIZE; col++) {
+                mSudokuBoard.get(row).add(EMPTY_CELL);
+            }
         }
     }
 
