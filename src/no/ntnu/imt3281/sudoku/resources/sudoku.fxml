@@ -10,21 +10,20 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="no.ntnu.imt3281.sudoku.SudokuController">
    <children>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button mnemonicParsing="false" text="New Game" />
-            <Button mnemonicParsing="false" text="Save" />
-            <Button mnemonicParsing="false" text="Load" />
-            <Button mnemonicParsing="false" text="Exit" />
+          <Button fx:id="btnNewGame" mnemonicParsing="false" onAction="#OnClickNewGame" text="New Game" />
+            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#OnClickSave" text="Save" />
+            <Button fx:id="btnLoad" mnemonicParsing="false" onAction="#OnClickLoad" text="Load" />
+            <Button fx:id="btnExit" mnemonicParsing="false" onAction="#OnClickExit" text="Exit" />
         </items>
       </ToolBar>
       <HBox prefHeight="372.0" prefWidth="600.0">
          <children>
             <Pane prefHeight="362.0" prefWidth="100.0" />
-            <GridPane prefHeight="362.0" prefWidth="400.0" style="border: 1px;">
+            <GridPane fx:id="gridSudoku" onMousePressed="#OnMousePressedGrid" prefHeight="362.0" prefWidth="400.0" style="border: 1px;">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
