@@ -6,6 +6,10 @@ import java.util.List;
 public class Sudoku {
     private List<List<Integer>> mSudokuBoard;
 
+    public static final int ROW_SIZE = 9;
+    public static final int COL_SIZE = 9;
+    public static final int EMPTY_CELL = -1;
+
     /**
      * Creates a new sudoku board from the given board
      * 
