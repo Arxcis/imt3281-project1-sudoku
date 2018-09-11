@@ -12,6 +12,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
 public class SudokuController {
+    
+    public static Parent makeSceneRoot() throws IOException {
+		final String resourcePath = "./resources/fxml/sudoku.fxml";
+		return FXMLLoader.load(SudokuController.class.getResource(resourcePath));
+    }
 
     @FXML
     private Button btnNewGame;
@@ -51,11 +56,5 @@ public class SudokuController {
     @FXML
     void OnMousePressedGrid(MouseEvent event) {
     	System.out.println("OnMousePressedGrid");
-    }
-    
-    
-    public static Parent makeSceneRoot() throws IOException {
-		final String resourcePath = "./resources/fxml/sudoku.fxml";
-		return FXMLLoader.load(SudokuController.class.getResource(resourcePath));
     }
 }
