@@ -3,6 +3,8 @@ package no.ntnu.imt3281.sudoku;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+
 public class Sudoku {
     private List<List<Integer>> mSudokuBoard;
 
@@ -11,10 +13,30 @@ public class Sudoku {
     public static final int EMPTY_CELL = -1;
 
     /**
-     * Creates a new sudoku board from the given board
-     * 
-     * @param board The new board
+     * Creates a new Sudoku board constructed from the supplied json string.
+     *
+     * @param jsonString String containing the
+     * @return a new Sudoku board constructed from the supplied json string.
      */
+    public static Sudoku loadSudokuFromJson(final String jsonString) {
+        var board = new Sudoku();
+        var array = new JSONArray(jsonString);
+
+        for (int row = 0; row < array.length(); row++) {
+            var jsonRow = array.getJSONArray(row);
+
+            for (int col = 0; col < jsonRow.length(); col++) {
+                var value = jsonRow.getInt(col);
+                if (value != EMPTY_CELL) {
+                    board.addNumber(row, col, value);
+                }
+            }
+        }
+
+        return board;
+    }
+
+
     /**
      * Creates a new entirely empty Sudoku board. 
      */
