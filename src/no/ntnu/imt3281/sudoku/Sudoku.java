@@ -12,11 +12,11 @@ public class Sudoku {
 
     /**
      * Creates a new sudoku board from the given board
-     * 
+     *
      * @param board The new board
      */
     /**
-     * Creates a new entirely empty Sudoku board. 
+     * Creates a new entirely empty Sudoku board.
      */
     public Sudoku() {
         mSudokuBoard = new ArrayList<>();
@@ -31,7 +31,7 @@ public class Sudoku {
     /**
      * Gets the element in the sudoku board located at the position indicated by row
      * and col.
-     * 
+     *
      * @param row The row containing the element.
      * @param col The column containing the element.
      * @return The element located at the position indicated by row and col.
@@ -43,12 +43,62 @@ public class Sudoku {
     /**
      * Sets the element in the sudoku board located at the position indicated by row
      * and col.
-     * 
+     *
      * @param row   The row containing the element.
      * @param col   The column containing the element.
      * @param value The new value of the element.
      */
     protected void setElement(int row, int col, int value) {
         mSudokuBoard.get(row).set(col, value);
+    }
+
+    /**
+     * Checks whether setting the element in the sudoku board at the position indicated
+     * by row and col to equal value would be a valid move, and if so, calls
+     * setElement to do so.
+     *
+     * @param row   The row containing the element.
+     * @param col   The column containing the element.
+     * @param value The value we're trying to set the element to be.
+     */
+    public void addNumber(int row, int col, int value) {
+
+        // Check if element is locked
+        // Check that value is a number from 1 to 9
+        if (value < 1 || value > 9) {
+            throw new BadNumberException("Value is not a number from 1 to 9");
+        }
+        // Check that row is a number from 0 to 8
+        if (!(row > 0 && row < ROW_SIZE)) {
+            throw new BadNumberException("row is not a value from 0 to 8");
+        }
+        // Check that col is a number from 0 to 8
+        if (!(col > 0 && col < COL_SIZE)) {
+            throw new BadNumberException("col is not a value from 0 to 8");
+        }
+        // Check whether the number already exists in this row
+        for (int i = 0; i < ROW_SIZE; ++i) {
+            if (getElement(i, col) == value) {
+                throw new BadNumberException("Number already exists in this row");
+            }
+        }
+        // Check whether the number already exists in this column
+        for (int j = 0; j < COL_SIZE; ++j) {
+            if (getElement(row, j) == value) {
+                throw new BadNumberException("Number already exists in this column");
+            }
+        }
+        // Check whether the number already exists in this 3x3 subgrid
+        int rowOffset = row / 3;
+        int colOffset = col / 3;
+        for (int k = 0; k < 3; ++k) {
+            for (int l = 0; l < 3; ++l) {
+                if (getElement(l + colOffset * 3, k + rowOffset * 3) == value) {
+                    throw new BadNumberException("Number already exists in this 3x3 subgrid");
+                }
+            }
+        }
+        // If all tests are good, set the element's value to equal param value
+        setElement(row, col, value);
     }
 }
