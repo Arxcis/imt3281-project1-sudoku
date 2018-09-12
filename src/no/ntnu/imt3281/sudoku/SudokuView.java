@@ -21,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class SudokuView {
     
@@ -104,6 +105,7 @@ public class SudokuView {
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
             for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
         	AnchorPane cell = new AnchorPane();
+        	cell.maxWidth(400.0);
         	cell.getStyleClass().add("cell");
         	
         	// DOC - PseudoClass https://stackoverflow.com/a/34225599 - 12.09.18
@@ -113,6 +115,9 @@ public class SudokuView {
         	     
         	Label label = new Label(Integer.toString(Sudoku.EMPTY_CELL));
         	label.getStyleClass().add("label");
+        	label.maxWidthProperty().bind(cell.widthProperty());
+        	label.setTextAlignment(TextAlignment.CENTER);
+        	
         	cell.getChildren().add(label);
         	this.gridSudoku.add(cell, col, row);
             } 
