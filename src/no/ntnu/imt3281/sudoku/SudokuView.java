@@ -89,30 +89,33 @@ public class SudokuView {
 
     @FXML
     void initialize() {
-        // Assert that all references are bound
+        // 1. Assert that all references are bound
         assert btnNewGame != null : "fx:id=\"btnNewGame\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnLoad != null : "fx:id=\"btnLoad\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnExit != null : "fx:id=\"btnExit\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert gridSudoku != null : "fx:id=\"gridSudoku\" was not injected: check your FXML file 'sudoku.fxml'.";
 
-        // @doc PseudoClass https://stackoverflow.com/a/34225599 - 12.09.18
+        // DOC - PseudoClass https://stackoverflow.com/a/34225599 - 12.09.18
         PseudoClass right = PseudoClass.getPseudoClass("right");
         PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
         
-        // Generate sudoku grid cells
+        // 2. Generate sudoku grid cells
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
-        	for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
-        	    AnchorPane cell = new AnchorPane();
-        	    cell.getStyleClass().add("cell");
-                    cell.pseudoClassStateChanged(right, col == 2 || col == 5);
-        	    cell.pseudoClassStateChanged(bottom, row == 2 || row == 5);
+            for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
+        	AnchorPane cell = new AnchorPane();
+        	cell.getStyleClass().add("cell");
+        	
+        	// DOC - PseudoClass https://stackoverflow.com/a/34225599 - 12.09.18
+                // TODO - rename magic numbers
+        	cell.pseudoClassStateChanged(right, col == 2 || col == 5);
+        	cell.pseudoClassStateChanged(bottom, row == 2 || row == 5);
         	     
-        	    Label label = new Label(Integer.toString(Sudoku.EMPTY_CELL));
-        	    label.getStyleClass().add("label");
-        	    cell.getChildren().add(label);
-        	    this.gridSudoku.add(cell, col, row);
-        	} 
+        	Label label = new Label(Integer.toString(Sudoku.EMPTY_CELL));
+        	label.getStyleClass().add("label");
+        	cell.getChildren().add(label);
+        	this.gridSudoku.add(cell, col, row);
+            } 
         }
     }
 }
