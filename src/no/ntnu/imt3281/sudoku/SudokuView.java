@@ -4,21 +4,41 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Text;
 
-public class SudokuController {
+public class SudokuView {
     
-    public static Parent makeSceneRoot() throws IOException {
-		final String resourcePath = "./resources/fxml/sudoku.fxml";
-		return FXMLLoader.load(SudokuController.class.getResource(resourcePath));
+    public static Scene loadScene() throws IOException
+        {
+        
+		final URL fxml = SudokuView.class
+		        .getResource("./resources/fxml/sudoku.fxml");
+		
+		final Parent root = FXMLLoader.load(fxml);
+		final Scene scene = new Scene(root);
+		
+		final String css = SudokuView.class
+		        .getResource("./resources/fxml/sudoku.css")
+		        .toExternalForm();
+		
+		scene.getStylesheets().add(css);
+		return scene;
     }
 
     @FXML // ResourceBundle that was given to the FXMLLoader
@@ -69,21 +89,29 @@ public class SudokuController {
 
     @FXML
     void initialize() {
+        // Assert that all references are bound
         assert btnNewGame != null : "fx:id=\"btnNewGame\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnLoad != null : "fx:id=\"btnLoad\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnExit != null : "fx:id=\"btnExit\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert gridSudoku != null : "fx:id=\"gridSudoku\" was not injected: check your FXML file 'sudoku.fxml'.";
+
+        // @doc PseudoClass https://stackoverflow.com/a/34225599 - 12.09.18
+        PseudoClass right = PseudoClass.getPseudoClass("right");
+        PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
         
-        for (int row = 0; row < this.gridSudoku.getRowCount(); ++row) {
-        	for (int col = 0; col < this.gridSudoku.getColumnCount(); ++col) {
-        		var rect = new Rectangle(44,42);
-        		rect.setFill(Color.TRANSPARENT);
-        		rect.setStrokeType(StrokeType.INSIDE);
-        		rect.setStroke(Color.BLACK);
-                rect.setStrokeWidth(1);
-            
-        		this.gridSudoku.add(rect, col, row);
+        // Generate sudoku grid cells
+        for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
+        	for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
+        	    AnchorPane cell = new AnchorPane();
+        	    cell.getStyleClass().add("cell");
+                    cell.pseudoClassStateChanged(right, col == 2 || col == 5);
+        	    cell.pseudoClassStateChanged(bottom, row == 2 || row == 5);
+        	     
+        	    Label label = new Label(Integer.toString(Sudoku.EMPTY_CELL));
+        	    label.getStyleClass().add("label");
+        	    cell.getChildren().add(label);
+        	    this.gridSudoku.add(cell, col, row);
         	} 
         }
     }
