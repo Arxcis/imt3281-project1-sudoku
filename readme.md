@@ -1,9 +1,8 @@
 #### Group Members
 
-Jonas Johan Solsvik
-Bjarte Klyve Larsen
-Per-Morten Straume
-Herman Tandberg Dybing
+Jonas Johan Solsvik  
+Per-Morten Straume  
+Herman Tandberg Dybing  
 
 #### Commit standard
 
