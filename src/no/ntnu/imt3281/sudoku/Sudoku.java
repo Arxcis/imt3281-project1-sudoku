@@ -131,8 +131,26 @@ public class Sudoku {
         setElement(row, col, value);
     }
 
+    /**
+     * Gets an iterator to sudoku board. The iteration strategy is indicated by the
+     * type parameter supplied.
+     *
+     * @param type  The type indicating the iteration strategy to be used. Must be
+     *              RowIterator, ColumnIterator or SubGridIterator.
+     *
+     * @param value Indicates the selection of the iteration. If type is RowIterator
+     *              this is the row you wish to iterate over, in case of
+     *              ColumnIterator it is the column to iterate over, lastly in case
+     *              of SubGrid it is the id of the sub grid to iterate over.
+     *
+     * @return An iterator using the strategy indicated by the type parameter.
+     *
+     * @exception Throws IllegalArgumentException if an unsupported type is
+     *                   supplied. Type must be: RowIterator, ColumnIterator or
+     *                   SubGridIterator. Throws IllegalArgumentException if an
+     *                   unsupported type is supplied.
+     */
     protected Iterator<Integer> iterator(Class<?> type, int value) {
-
         if (type == RowIterator.class)
             return new RowIterator(mSudokuBoard, value);
         else if (type == ColumnIterator.class)
