@@ -1,0 +1,19 @@
+# This is a sample build configuration for Java (Maven).
+# Check our guides at https://confluence.atlassian.com/x/zd-5Mw for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: goodforgod/debian-jdk10-oracle
+
+pipelines:
+  default:
+    - step:
+        script: # Modify the commands below to build your repository.
+          - apt-get update 
+          - apt-get install -y wget
+          - pushd /opt/ >/dev/null
+          - wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+          - tar -xf apache-maven-3.5.4-bin.tar.gz
+          - mv apache-maven-3.5.4/ apache-maven/
+          - popd >/dev/null
+          - /opt/apache-maven/bin/mvn -B verify # -B batch mode makes Maven less verbose
