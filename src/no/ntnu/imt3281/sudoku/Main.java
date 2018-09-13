@@ -17,9 +17,9 @@ public class Main extends Application {
             System.out.println("IOException: " + e.getCause());
             return; 
         }
-	primaryStage.setTitle("Sudoku");
-	primaryStage.setScene(scene);
-	primaryStage.show();
+        primaryStage.setTitle("Sudoku");
+		primaryStage.setScene(scene);
+		primaryStage.show();
     }
 
 	

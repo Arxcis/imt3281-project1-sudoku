@@ -104,22 +104,7 @@ public class SudokuView {
         // 2. Generate sudoku grid cells
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
             for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
-        	AnchorPane cell = new AnchorPane();
-        	cell.maxWidth(400.0);
-        	cell.getStyleClass().add("cell");
-        	
-        	// DOC - PseudoClass https://stackoverflow.com/a/34225599 - 12.09.18
-                // TODO - rename magic numbers
-        	cell.pseudoClassStateChanged(right, col == 2 || col == 5);
-        	cell.pseudoClassStateChanged(bottom, row == 2 || row == 5);
-        	     
-        	Label label = new Label(Integer.toString(Sudoku.EMPTY_CELL));
-        	label.getStyleClass().add("label");
-        	label.maxWidthProperty().bind(cell.widthProperty());
-        	label.setTextAlignment(TextAlignment.CENTER);
-        	
-        	cell.getChildren().add(label);
-        	this.gridSudoku.add(cell, col, row);
+
             } 
         }
     }
