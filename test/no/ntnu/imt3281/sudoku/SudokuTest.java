@@ -51,7 +51,6 @@ public class SudokuTest {
         }
     }
 
-
     /**
      * Tests if we can parse a sudoku found online, mainly to avoid having just one test case.
      */
@@ -87,5 +86,19 @@ public class SudokuTest {
                 assertTrue(sudoku.getElement(row, col) == desired[row][col]);
             }
         }
+    }
+
+    @Test
+    public void addNumberAllow0BasedRow() {
+        var sudoku = new Sudoku();
+        sudoku.addNumber(0, 1, 1);
+        assertTrue(sudoku.getElement(0, 1) == 1);
+    }
+
+    @Test
+    public void addNumberAllow0BasedCol() {
+        var sudoku = new Sudoku();
+        sudoku.addNumber(1, 0, 1);
+        assertTrue(sudoku.getElement(1, 0) == 1);
     }
 }

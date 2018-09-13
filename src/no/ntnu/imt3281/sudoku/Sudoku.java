@@ -92,12 +92,12 @@ public class Sudoku {
         }
 
         // Check that row is a number from 0 to 8
-        if (!(row > 0 && row < ROW_SIZE)) {
+        if (row < 0 || row >= ROW_SIZE) {
             throw new BadNumberException("row is not a value from 0 to 8");
         }
 
         // Check that col is a number from 0 to 8
-        if (!(col > 0 && col < COL_SIZE)) {
+        if (col < 0 || col >= COL_SIZE) {
             throw new BadNumberException("col is not a value from 0 to 8");
         }
 
