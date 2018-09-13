@@ -52,7 +52,8 @@ public class SudokuTest {
     }
 
     /**
-     * Tests if we can parse a sudoku found online, mainly to avoid having just one test case.
+     * Tests if we can parse a sudoku found online, mainly to avoid having just one
+     * test case.
      */
     @Test
     public void testJSONParseSuccessOnlineSudoku() {
@@ -100,5 +101,12 @@ public class SudokuTest {
         var sudoku = new Sudoku();
         sudoku.addNumber(1, 0, 1);
         assertTrue(sudoku.getElement(1, 0) == 1);
+    }
+
+    @Test(expected = BadNumberException.class)
+    public void addNumberThrowsOnIdenticalValueInSubGrid() {
+        var sudoku = new Sudoku();
+        sudoku.addNumber(0, 0, 1);
+        sudoku.addNumber(0, 1, 1);
     }
 }

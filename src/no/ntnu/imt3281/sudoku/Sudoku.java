@@ -120,7 +120,7 @@ public class Sudoku {
         int colOffset = col / 3;
         for (int k = 0; k < 3; ++k) {
             for (int l = 0; l < 3; ++l) {
-                if (getElement(l + colOffset * 3, k + rowOffset * 3) == value) {
+                if (getElement(k + rowOffset * 3, l + colOffset * 3) == value) {
                     throw new BadNumberException("Number already exists in this 3x3 subgrid");
                 }
             }
