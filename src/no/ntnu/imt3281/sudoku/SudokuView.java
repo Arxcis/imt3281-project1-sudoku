@@ -26,19 +26,14 @@ import javafx.scene.text.TextAlignment;
 public class SudokuView {
     
     public static Scene loadScene() throws IOException
-        {
-        
-		final URL fxml = SudokuView.class
-		        .getResource("./resources/fxml/sudoku.fxml");
-		
+    { 
+		final URL fxml = SudokuView.class.getResource("./resources/fxml/sudoku.fxml");
 		final Parent root = FXMLLoader.load(fxml);
 		final Scene scene = new Scene(root);
 		
-		final String css = SudokuView.class
-		        .getResource("./resources/fxml/sudoku.css")
-		        .toExternalForm();
-		
+		final String css = SudokuView.class.getResource("./resources/fxml/sudoku.css").toString();
 		scene.getStylesheets().add(css);
+		
 		return scene;
     }
 
@@ -59,9 +54,6 @@ public class SudokuView {
 
     @FXML // fx:id="btnExit"
     private Button btnExit;
-
-    @FXML // fx:id="gridSudoku"
-    private GridPane gridSudoku;
 
     @FXML
     void OnClickExit(ActionEvent event) {
@@ -95,17 +87,9 @@ public class SudokuView {
         assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnLoad != null : "fx:id=\"btnLoad\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnExit != null : "fx:id=\"btnExit\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert gridSudoku != null : "fx:id=\"gridSudoku\" was not injected: check your FXML file 'sudoku.fxml'.";
 
         // DOC - PseudoClass https://stackoverflow.com/a/34225599 - 12.09.18
         PseudoClass right = PseudoClass.getPseudoClass("right");
         PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
-        
-        // 2. Generate sudoku grid cells
-        for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
-            for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
-
-            } 
-        }
     }
 }
