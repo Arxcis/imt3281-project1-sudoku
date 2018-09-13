@@ -18,7 +18,7 @@ pipelines:
           - cd /etc/profile.d/
           - echo "# Apache Maven Environment Variables" >> maven.sh
           - echo "# MAVEN_HOME for Maven 1 - M2_HOME for Maven 2" >> maven.sh
-          - echo "export JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> maven.sh
+          - echo "export JAVA_HOME=/usr/lib/jvm/java-10-oracle" >> maven.sh
           - echo "export M2_HOME=/opt/apache-maven" >> maven.sh
           - echo "export MAVEN_HOME=/opt/apache-maven" >> maven.sh
           - echo "export PATH=${M2_HOME}/bin:${PATH}" >> maven.sh
