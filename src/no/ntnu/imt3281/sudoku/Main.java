@@ -26,12 +26,10 @@ public class Main extends Application {
 
     @Override
     public void stop() throws InterruptedException {
-        System.out.println("Stop called: try to let background threads complete...");
         exec.shutdown();
-        if (exec.awaitTermination(2, TimeUnit.SECONDS)) {
-            System.out.println("Background threads exited");
-        } else {
-            System.out.println("Background threads did not exit, trying to force termination (via interruption)");
+
+        final boolean finishedInATimelyManner = exec.awaitTermination(2, TimeUnit.SECONDS);
+        if (!finishedInATimelyManner) {
             exec.shutdownNow();
         }       
     }
