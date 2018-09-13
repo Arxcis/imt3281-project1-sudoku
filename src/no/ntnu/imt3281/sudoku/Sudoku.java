@@ -135,6 +135,8 @@ public class Sudoku {
 
         if (type == RowIterator.class)
             return new RowIterator(mSudokuBoard, value);
+        else if (type == ColumnIterator.class)
+            return new ColumnIterator(mSudokuBoard, value);
 
         throw new IllegalArgumentException("Class must be Row-, Column- or SubGrid-Iterator");
     }

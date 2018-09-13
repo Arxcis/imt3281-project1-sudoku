@@ -133,4 +133,27 @@ public class SudokuTest {
         assertTrue(it.hasNext() == false && counter == 10);
     }
 
+    @Test
+    public void iterateThroughColumn() {
+        var map = "[\n" +
+                "[1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[2, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[3, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[4, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[5, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[6, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[7, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[8, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[9, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
+                "]";
+
+        var board = Sudoku.loadSudokuFromJson(map);
+        var it = board.iterator(ColumnIterator.class, 0);
+        int counter = 1;
+        while (it.hasNext()) {
+            assertTrue(it.next() == counter++);
+        }
+        assertTrue(it.hasNext() == false && counter == 10);
+    }
+
 }
