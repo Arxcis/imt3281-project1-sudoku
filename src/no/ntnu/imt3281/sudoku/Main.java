@@ -12,7 +12,7 @@ public class Main extends Application {
 	
         Scene scene = null;
         try {
-            scene = SudokuView.loadScene();
+            scene = ViewController.loadScene();
         } catch(IOException e) {
             System.out.println("IOException: " + e.getCause());
             return; 

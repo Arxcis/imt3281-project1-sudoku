@@ -23,15 +23,15 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class SudokuView {
+public class ViewController {
     
     public static Scene loadScene() throws IOException
     { 
-		final URL fxml = SudokuView.class.getResource("./resources/fxml/sudoku.fxml");
+		final URL fxml = ViewController.class.getResource("View.fxml");
 		final Parent root = FXMLLoader.load(fxml);
 		final Scene scene = new Scene(root);
 		
-		final String css = SudokuView.class.getResource("./resources/fxml/sudoku.css").toString();
+		final String css = ViewController.class.getResource("View.css").toString();
 		scene.getStylesheets().add(css);
 		
 		return scene;
