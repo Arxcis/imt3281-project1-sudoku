@@ -11,9 +11,10 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - apt-get update
           - apt-get install -y software-properties-common
-          - add-apt-repository -y ppa:webupd8team/java
+          - add-apt-repository ppa:linuxuprising/java
           - apt-get update
           - echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
           - echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
-          - apt-get -y install oracle-java10-installer 
+          - apt-get install -y oracle-java10-installer
+          - apt-get install -y oracle-java10-set-default
           - mvn -B verify # -B batch mode makes Maven less verbose
