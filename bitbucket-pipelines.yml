@@ -9,6 +9,7 @@ pipelines:
   default:
     - step:
         script: # Modify the commands below to build your repository.
+          - apt-get update
           - apt-get install -y software-properties-common
           - add-apt-repository -y ppa:webupd8team/java
           - apt-get update
