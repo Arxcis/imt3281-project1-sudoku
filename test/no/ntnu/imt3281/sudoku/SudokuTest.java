@@ -109,4 +109,28 @@ public class SudokuTest {
         sudoku.addNumber(0, 0, 1);
         sudoku.addNumber(0, 1, 1);
     }
+
+    @Test
+    public void iterateThroughRow() {
+        var map = "[\n" +
+                "[1, 2, 3, 4, 5, 6, 7, 8, 9],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
+                "]";
+
+        var board = Sudoku.loadSudokuFromJson(map);
+        var it = board.iterator(RowIterator.class, 0);
+        int counter = 1;
+        while (it.hasNext()) {
+            assertTrue(it.next() == counter++);
+        }
+        assertTrue(it.hasNext() == false && counter == 10);
+    }
+
 }

@@ -1,6 +1,7 @@
 package no.ntnu.imt3281.sudoku;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -128,5 +129,13 @@ public class Sudoku {
 
         // If all tests are good, set the element's value to equal param value
         setElement(row, col, value);
+    }
+
+    protected Iterator<Integer> iterator(Class<?> type, int value) {
+
+        if (type == RowIterator.class)
+            return new RowIterator(mSudokuBoard, value);
+
+        throw new IllegalArgumentException("Class must be Row-, Column- or SubGrid-Iterator");
     }
 }
