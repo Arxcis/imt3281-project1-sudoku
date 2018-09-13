@@ -11,17 +11,9 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - apt-get update 
           - apt-get install -y wget
-          - cd /opt/
+          - pushd /opt/ >/dev/null
           - wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
           - tar -xf apache-maven-3.5.4-bin.tar.gz
           - mv apache-maven-3.5.4/ apache-maven/
-          - cd /etc/profile.d/
-          - echo "# Apache Maven Environment Variables" >> maven.sh
-          - echo "# MAVEN_HOME for Maven 1 - M2_HOME for Maven 2" >> maven.sh
-          - echo "export JAVA_HOME=/usr/lib/jvm/java-10-oracle" >> maven.sh
-          - echo "export M2_HOME=/opt/apache-maven" >> maven.sh
-          - echo "export MAVEN_HOME=/opt/apache-maven" >> maven.sh
-          - echo "export PATH=${M2_HOME}/bin:${PATH}" >> maven.sh
-          - chmod +x maven.sh
-          - source maven.sh
-          - mvn -B verify # -B batch mode makes Maven less verbose
+          - popd >/dev/null
+          - /opt/apache-maven/bin/mvn -B verify # -B batch mode makes Maven less verbose
