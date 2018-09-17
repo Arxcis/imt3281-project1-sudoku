@@ -22,7 +22,7 @@ public class SubGridIterator implements SudokuIterator {
      *                   range [0,9).
      */
     public SubGridIterator(List<List<Integer>> collection, int subGrid) {
-        if (subGrid < 0 || subGrid >= 9)
+        if (subGrid < 0 || subGrid >= Sudoku.GRID_COUNT)
             throw new IllegalArgumentException(
                     String.format("subGrid: %d is outside the range of the sudoku board [0,9).", subGrid));
 
@@ -37,7 +37,7 @@ public class SubGridIterator implements SudokuIterator {
      */
     @Override
     public boolean hasNext() {
-        return mCellIdx < 9;
+        return mCellIdx < Sudoku.GRID_COUNT;
     }
 
     /*

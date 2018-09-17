@@ -22,7 +22,7 @@ public class RowIterator implements SudokuIterator {
      *                   [0,9).
      */
     public RowIterator(List<List<Integer>> collection, int row) {
-        if (row < 0 || row >= 9)
+        if (row < 0 || row >= Sudoku.ROW_SIZE)
             throw new IllegalArgumentException(
                     String.format("row: %d is outside the range of the sudoku board [0,9).", row));
 
@@ -37,7 +37,7 @@ public class RowIterator implements SudokuIterator {
      */
     @Override
     public boolean hasNext() {
-        return mColumn < mCollection.get(mRow).size();
+        return mColumn < Sudoku.COL_SIZE;
     }
 
     /*
