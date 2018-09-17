@@ -1,7 +1,6 @@
 package no.ntnu.imt3281.sudoku;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -11,6 +10,7 @@ public class Sudoku {
 
     public static final int ROW_SIZE = 9;
     public static final int COL_SIZE = 9;
+    public static final int GRID_COUNT = 9;
     public static final int EMPTY_CELL = -1;
 
     /**
@@ -149,7 +149,7 @@ public class Sudoku {
      *                   SubGridIterator. Throws IllegalArgumentException if an
      *                   unsupported type is supplied.
      */
-    protected Iterator<Integer> iterator(Class<?> type, int value) {
+    protected SudokuIterator iterator(Class<?> type, int value) {
         if (type == RowIterator.class)
             return new RowIterator(mSudokuBoard, value);
         else if (type == ColumnIterator.class)
