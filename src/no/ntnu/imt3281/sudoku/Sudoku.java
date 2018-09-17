@@ -85,6 +85,11 @@ public class Sudoku {
      * @param row   The row containing the element.
      * @param col   The column containing the element.
      * @param value The value we're trying to set the element to be.
+     *
+     * @exception Throws IllegalArgumentException if value is not in range [1-9]
+     *
+     * @exception Throws BadNumberException if value already exists within the row,
+     *                   column, or sub grid it is entered into.
      */
     public void addNumber(int row, int col, int value) {
 
@@ -94,8 +99,8 @@ public class Sudoku {
             throw new IllegalArgumentException();
         }
 
-        Class<?>[] iterators = {RowIterator.class, ColumnIterator.class, SubGridIterator.class};
-        int[] indices = {row, col, (row / 3) * 3 + (col / 3)};
+        Class<?>[] iterators = { RowIterator.class, ColumnIterator.class, SubGridIterator.class };
+        int[] indices = { row, col, (row / 3) * 3 + (col / 3) };
 
         for (int i = 0; i < iterators.length; i++) {
             var it = iterator(iterators[i], indices[i]);
