@@ -2,6 +2,7 @@ package no.ntnu.imt3281.sudoku;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Iterator used to iterate through a sub grid in a collection.
@@ -15,10 +16,17 @@ public class SubGridIterator implements Iterator<Integer> {
      * Creates a sub grid iterator that will iterate through the selected sub grid
      * in the supplied collection.
      *
-     * @param collection The collection containing the row to iterate through
+     * @param collection The collection containing the sub grid to iterate through.
      * @param subGrid    The sub grid that should be iterated through.
+     *
+     * @exception Throws IllegalArgumentException if subGrid is outside the valid
+     *                   range [0,9).
      */
     public SubGridIterator(List<List<Integer>> collection, int subGrid) {
+        if (subGrid < 0 || subGrid >= 9)
+            throw new IllegalArgumentException(
+                    String.format("subGrid: %d is outside the range of the sudoku board [0,9).", subGrid));
+
         mCollection = collection;
         mSubGrid = subGrid;
     }
@@ -41,7 +49,7 @@ public class SubGridIterator implements Iterator<Integer> {
     @Override
     public Integer next() {
         if (!hasNext())
-            return null;
+            throw new NoSuchElementException();
 
         // Logic for calculating row and col taken from:
         // https://stackoverflow.com/questions/22289144/how-to-get-the-sudoku-2d-array-index-given-its-sub-grid-and-cell-in-the-sub
@@ -51,5 +59,4 @@ public class SubGridIterator implements Iterator<Integer> {
 
         return mCollection.get(row).get(col);
     }
-
 }
