@@ -4,37 +4,23 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+
 
 public class ViewController {
-    
-    public static Scene loadScene() throws IOException
-    { 
-		final URL fxml = ViewController.class.getResource("View.fxml");
-		final Parent root = FXMLLoader.load(fxml);
-		final Scene scene = new Scene(root);
-		
-		final String css = ViewController.class.getResource("View.css").toString();
-		scene.getStylesheets().add(css);
-		
-		return scene;
+
+    public static Scene loadScene() throws IOException {
+        final URL fxml = ViewController.class.getResource("View.fxml");
+        final Parent root = FXMLLoader.load(fxml);
+        final Scene scene = new Scene(root);
+
+        return scene;
     }
 
     @FXML // ResourceBundle that was given to the FXMLLoader
@@ -57,27 +43,27 @@ public class ViewController {
 
     @FXML
     void OnClickExit(ActionEvent event) {
-    	System.out.println("OnClickExit");
+        System.out.println("OnClickExit");
     }
 
     @FXML
     void OnClickLoad(ActionEvent event) {
-    	System.out.println("OnClickLoad");
+        System.out.println("OnClickLoad");
     }
 
     @FXML
     void OnClickNewGame(ActionEvent event) {
-    	System.out.println("OnClickNewGame");
+        System.out.println("OnClickNewGame");
     }
 
     @FXML
     void OnClickSave(ActionEvent event) {
-    	System.out.println("OnClickSave");
+        System.out.println("OnClickSave");
     }
 
     @FXML
     void OnMousePressedGrid(MouseEvent event) {
-    	System.out.println("OnMousePressedGrid");
+        System.out.println("OnMousePressedGrid");
     }
 
     @FXML
@@ -88,8 +74,5 @@ public class ViewController {
         assert btnLoad != null : "fx:id=\"btnLoad\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnExit != null : "fx:id=\"btnExit\" was not injected: check your FXML file 'sudoku.fxml'.";
 
-        // DOC - PseudoClass https://stackoverflow.com/a/34225599 - 12.09.18
-        PseudoClass right = PseudoClass.getPseudoClass("right");
-        PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
     }
 }

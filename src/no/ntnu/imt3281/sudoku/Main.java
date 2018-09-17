@@ -21,7 +21,7 @@ public class Main extends Application {
 		primaryStage.show();
     }
 
-    // @ref Stop() cleanup - https://stackoverflow.com/a/46060236 - 13.09.18    
+    // Stop() cleanup - @ref  https://stackoverflow.com/a/46060236 - 13.09.18    
     private final ExecutorService exec = Executors.newCachedThreadPool();
 
     @Override

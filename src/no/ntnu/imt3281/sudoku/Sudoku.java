@@ -53,9 +53,9 @@ public class Sudoku {
     }
 
     /**
-     * Checks whether setting the element in the sudoku board at the position indicated
-     * by row and col to equal value would be a valid move, and if so, calls
-     * setElement to do so.
+     * Checks whether setting the element in the sudoku board at the position
+     * indicated by row and col to equal value would be a valid move, and if so,
+     * calls setElement to do so.
      *
      * @param row   The row containing the element.
      * @param col   The column containing the element.
