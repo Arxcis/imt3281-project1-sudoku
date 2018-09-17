@@ -1,13 +1,12 @@
 package no.ntnu.imt3281.sudoku;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
  * Iterator used to iterate through a sub grid in a collection.
  */
-public class SubGridIterator implements Iterator<Integer> {
+public class SubGridIterator implements SudokuIterator {
     private List<List<Integer>> mCollection;
     private int mSubGrid;
     private int mCellIdx;
@@ -48,6 +47,27 @@ public class SubGridIterator implements Iterator<Integer> {
      */
     @Override
     public Integer next() {
+        var value = peek();
+        mCellIdx++;
+
+        return value;
+    }
+
+    /*
+     * @see no.ntnu.imt3281.sudoku.SudokuIterator#getPosition()
+     */
+    @Override
+    public Cell getPosition() {
+        int row = (mSubGrid / 3) * 3 + mCellIdx / 3;
+        int col = (mSubGrid % 3) * 3 + mCellIdx % 3;
+        return new Cell(row, col);
+    }
+
+    /*
+     * @see no.ntnu.imt3281.sudoku.SudokuIterator#peek()
+     */
+    @Override
+    public Integer peek() {
         if (!hasNext())
             throw new NoSuchElementException();
 
@@ -55,7 +75,6 @@ public class SubGridIterator implements Iterator<Integer> {
         // https://stackoverflow.com/questions/22289144/how-to-get-the-sudoku-2d-array-index-given-its-sub-grid-and-cell-in-the-sub
         int row = (mSubGrid / 3) * 3 + mCellIdx / 3;
         int col = (mSubGrid % 3) * 3 + mCellIdx % 3;
-        mCellIdx++;
 
         return mCollection.get(row).get(col);
     }

@@ -104,6 +104,90 @@ public class IteratorTest {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    /// Information tests
+    ///////////////////////////////////////////////////////////////////////////
+
+    @Test
+    public void rowIteratorSupplyEnoughInformationToIdentifyLocation() {
+        var map = "[\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
+                "]";
+
+        var board = Sudoku.loadSudokuFromJson(map);
+        var it = board.iterator(RowIterator.class, 0);
+        int counter = 0;
+        while (it.hasNext()) {
+
+            var location = it.getPosition();
+            assertTrue(location.getRow() == 0 && location.getColumn() == counter++ && it.getClass() == RowIterator.class);
+            it.next();
+        }
+    }
+
+    @Test
+    public void columnIteratorSupplyEnoughInformationToIdentifyLocation() {
+        var map = "[\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
+                "]";
+
+        var board = Sudoku.loadSudokuFromJson(map);
+        var it = board.iterator(ColumnIterator.class, 0);
+        int counter = 0;
+        while (it.hasNext()) {
+
+            var location = it.getPosition();
+            assertTrue(location.getRow() == counter++ && location.getColumn() == 0 && it.getClass() == ColumnIterator.class);
+            it.next();
+        }
+    }
+
+    @Test
+    public void subGridIteratorSupplyEnoughInformationToIdentifyLocation() {
+        var map = "[\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
+                "]";
+
+        int[] rowIndices = {0, 0, 0, 1, 1, 1, 2, 2, 2};
+        int[] colIndices = {0, 1, 2, 0, 1, 2, 0, 1, 2};
+
+        var board = Sudoku.loadSudokuFromJson(map);
+        var it = board.iterator(SubGridIterator.class, 0);
+        int counter = 0;
+        while (it.hasNext()) {
+            var location = it.getPosition();
+            assertTrue(location.getRow() == rowIndices[counter] && location.getColumn() == colIndices[counter]
+                    && it.getClass() == SubGridIterator.class);
+            counter++;
+
+            it.next();
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     /// Exception tests
     ///////////////////////////////////////////////////////////////////////////
     @Test(expected = IllegalArgumentException.class)
@@ -184,4 +268,5 @@ public class IteratorTest {
             }
         }
     }
+
 }

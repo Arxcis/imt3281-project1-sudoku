@@ -1,13 +1,12 @@
 package no.ntnu.imt3281.sudoku;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
  * Iterator used to iterate through a row in a collection.
  */
-public class RowIterator implements Iterator<Integer> {
+public class RowIterator implements SudokuIterator {
     private List<List<Integer>> mCollection;
     private int mRow;
     private int mColumn;
@@ -48,9 +47,27 @@ public class RowIterator implements Iterator<Integer> {
      */
     @Override
     public Integer next() {
+        var val = peek();
+        mColumn++;
+        return val;
+    }
+
+    /*
+     * @see no.ntnu.imt3281.sudoku.SudokuIterator#getPosition()
+     */
+    @Override
+    public Cell getPosition() {
+        return new Cell(mRow, mColumn);
+    }
+
+    /*
+     * @see no.ntnu.imt3281.sudoku.SudokuIterator#peek()
+     */
+    @Override
+    public Integer peek() {
         if (!this.hasNext())
             throw new NoSuchElementException();
 
-        return mCollection.get(mRow).get(mColumn++);
+        return mCollection.get(mRow).get(mColumn);
     }
 }
