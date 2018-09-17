@@ -10,6 +10,7 @@ public class Sudoku {
 
     public static final int ROW_SIZE = 9;
     public static final int COL_SIZE = 9;
+    public static final int GRID_COUNT = 9;
     public static final int EMPTY_CELL = -1;
 
     /**
@@ -35,7 +36,6 @@ public class Sudoku {
 
         return board;
     }
-
 
     /**
      * Creates a new entirely empty Sudoku board.
@@ -128,5 +128,35 @@ public class Sudoku {
 
         // If all tests are good, set the element's value to equal param value
         setElement(row, col, value);
+    }
+
+    /**
+     * Gets an iterator to sudoku board. The iteration strategy is indicated by the
+     * type parameter supplied.
+     *
+     * @param type  The type indicating the iteration strategy to be used. Must be
+     *              RowIterator, ColumnIterator or SubGridIterator.
+     *
+     * @param value Indicates the selection of the iteration. If type is RowIterator
+     *              this is the row you wish to iterate over, in case of
+     *              ColumnIterator it is the column to iterate over, lastly in case
+     *              of SubGrid it is the id of the sub grid to iterate over.
+     *
+     * @return An iterator using the strategy indicated by the type parameter.
+     *
+     * @exception Throws IllegalArgumentException if an unsupported type is
+     *                   supplied. Type must be: RowIterator, ColumnIterator or
+     *                   SubGridIterator. Throws IllegalArgumentException if an
+     *                   unsupported type is supplied.
+     */
+    protected SudokuIterator iterator(Class<?> type, int value) {
+        if (type == RowIterator.class)
+            return new RowIterator(mSudokuBoard, value);
+        else if (type == ColumnIterator.class)
+            return new ColumnIterator(mSudokuBoard, value);
+        else if (type == SubGridIterator.class)
+            return new SubGridIterator(mSudokuBoard, value);
+
+        throw new IllegalArgumentException("Class must be Row-, Column- or SubGrid-Iterator");
     }
 }

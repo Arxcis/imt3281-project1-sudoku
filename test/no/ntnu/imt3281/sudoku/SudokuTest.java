@@ -109,4 +109,5 @@ public class SudokuTest {
         sudoku.addNumber(0, 0, 1);
         sudoku.addNumber(0, 1, 1);
     }
+
 }
