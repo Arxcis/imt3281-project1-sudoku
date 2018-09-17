@@ -156,6 +156,54 @@ public class SudokuTest {
         assertTrue(it.hasNext() == false && counter == 10);
     }
 
+    @Test
+    public void iterateThroughSubGrid() {
+        var map = "[\n" +
+                "[1,  2,  3, -1, -1, -1, -1, -1, -1],\n" +
+                "[4,  5,  6, -1, -1, -1, -1, -1, -1],\n" +
+                "[7,  8,  9, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
+                "]";
+
+        var board = Sudoku.loadSudokuFromJson(map);
+        var it = board.iterator(SubGridIterator.class, 0);
+        int counter = 1;
+        while (it.hasNext()) {
+            assertTrue(it.next() == counter++);
+        }
+        assertTrue(it.hasNext() == false && counter == 10);
+    }
+
+    @Test
+    public void iterateThroughMiddleSubGrid() {
+        var map = "[\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1,  1,  2,  3, -1, -1, -1],\n" +
+                "[-1, -1, -1,  4,  5,  6, -1, -1, -1],\n" +
+                "[-1, -1, -1,  7,  8,  9, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
+                "]";
+
+        var board = Sudoku.loadSudokuFromJson(map);
+        var it = board.iterator(SubGridIterator.class, 4);
+        int counter = 1;
+        while (it.hasNext()) {
+            var val = it.next();
+            System.out.println(val);
+            assertTrue(val == counter++);
+        }
+        assertTrue(it.hasNext() == false && counter == 10);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void iteratorThrowsOnInvalidClass() {
         var map = "[\n" +

@@ -37,7 +37,6 @@ public class Sudoku {
         return board;
     }
 
-
     /**
      * Creates a new entirely empty Sudoku board.
      */
@@ -155,6 +154,8 @@ public class Sudoku {
             return new RowIterator(mSudokuBoard, value);
         else if (type == ColumnIterator.class)
             return new ColumnIterator(mSudokuBoard, value);
+        else if (type == SubGridIterator.class)
+            return new SubGridIterator(mSudokuBoard, value);
 
         throw new IllegalArgumentException("Class must be Row-, Column- or SubGrid-Iterator");
     }
