@@ -11,17 +11,17 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     
-	@Override
+    @Override
     public void start(Stage primaryStage) throws IOException {
-		
-		final var root = SudokuController.makeSceneRoot();
-		final Scene scene = new Scene(root);
-		primaryStage.setTitle("Sudoku");
+	
+        Scene scene = null;
+        scene = ViewController.loadScene();
+        primaryStage.setTitle("Sudoku");
 		primaryStage.setScene(scene);
 		primaryStage.show();
-	}
+    }
 
-    // @ref Stop() cleanup - https://stackoverflow.com/a/46060236 - 13.09.18    
+    // Stop() cleanup - @ref  https://stackoverflow.com/a/46060236 - 13.09.18    
     private final ExecutorService exec = Executors.newCachedThreadPool();
 
     @Override
@@ -33,7 +33,6 @@ public class Main extends Application {
             exec.shutdownNow();
         }       
     }
-
     public static void main(String[] args) {
         Application.launch(args);
     }

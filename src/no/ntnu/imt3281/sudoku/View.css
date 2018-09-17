@@ -1,0 +1,30 @@
+/* DOC - inspired by https://stackoverflow.com/a/34225599 - 12.09.18 */
+.root {
+    -fx-padding: 5px ;
+}
+
+.cell {
+    /* Defines a black border around the standard color -fx-base */
+    -fx-background-color:  yellow ;
+    -fx-background-insets: 0, 0 ;
+    -fx-padding: 20px;
+    -fx-text-alignment: center;
+    -fx-border: 1px solid black;
+}
+
+.cell:right {
+    -fx-background-insets: 0, 0 1 0 0 ;
+}
+
+.cell:bottom {
+    -fx-background-insets: 0, 0 0 1 0 ;
+}
+
+.cell:right:bottom {
+    -fx-background-insets: 0, 0 1 1 0 ;
+}
+
+.label {
+    -fx-text-alignment: center;
+    -fx-background-color: white;
+}
