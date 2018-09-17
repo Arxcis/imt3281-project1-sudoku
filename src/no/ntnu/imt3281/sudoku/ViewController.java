@@ -3,7 +3,6 @@ package no.ntnu.imt3281.sudoku;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -27,32 +26,26 @@ public class ViewController {
         return scene;
     }
 
-    @FXML // ResourceBundle that was given to the FXMLLoader
-    private ResourceBundle resources;
-
-    @FXML // URL location of the FXML file that was given to the FXMLLoader
-    private URL location;
-
-    @FXML // fx:id="btnNewGame"
-    private Button btnNewGame;
-
-    @FXML // fx:id="btnSave"
-    private Button btnSave;
-
-    @FXML // fx:id="btnLoad"
-    private Button btnLoad;
-
-    @FXML // fx:id="btnExit"
-    private Button btnExit;
-
-    @FXML
-    private GridPane grid;
-
     /** Direct reference to text fields in a 2D 9x9 array for easy lookup */
-    private ArrayList<ArrayList<TextField>> gridCells;
+    private ArrayList<ArrayList<TextField>> mGridCells;
 
-    /** The ONLY sudoku instance in the application */
-    private Sudoku sudoku;
+    /** Should be the ONLY sudoku instance in the application */
+    private Sudoku mSudoku;
+
+    @FXML // fx:id="mBtnNewGame"
+    private Button mBtnNewGame;
+
+    @FXML // fx:id="mBtnSave"
+    private Button mBtnSave;
+
+    @FXML // fx:id="mBtnLoad"
+    private Button mBtnLoad;
+
+    @FXML // fx:id="mBtnExit"
+    private Button mBtnExit;
+
+    @FXML // fx:id="mGrid"
+    private GridPane mGrid;
 
     @FXML
     void OnClickExit(ActionEvent event) {
@@ -82,20 +75,20 @@ public class ViewController {
     @FXML
     void initialize() {
         // 1. Assert that all references are bound
-        assert btnNewGame != null : "fx:id=\"btnNewGame\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert btnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert btnLoad != null : "fx:id=\"btnLoad\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert btnExit != null : "fx:id=\"btnExit\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert grid != null : "fx:id=\"grid\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnNewGame != null : "fx:id=\"btnNewGame\" was not injected: check your FXML file 'sudoku.fxml'.";
+        assert mBtnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'sudoku.fxml'.";
+        assert mBtnLoad != null : "fx:id=\"btnLoad\" was not injected: check your FXML file 'sudoku.fxml'.";
+        assert mBtnExit != null : "fx:id=\"btnExit\" was not injected: check your FXML file 'sudoku.fxml'.";
+        assert mGrid != null : "fx:id=\"grid\" was not injected: check your FXML file 'View.fxml'.";
 
-        this.sudoku = new Sudoku();
-        this.gridCells = new ArrayList<>();
+        mSudoku = new Sudoku();
+        mGridCells = new ArrayList<>();
 
         for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
-            gridCells.add(new ArrayList<>());
+            mGridCells.add(new ArrayList<>());
             for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
 
-                Integer cellNumber = this.sudoku.getElement(row, col);
+                Integer cellNumber = mSudoku.getElement(row, col);
 
                 TextField tf = new TextField(cellNumber.toString());
                 AnchorPane.setTopAnchor(tf, 0.0);
@@ -110,8 +103,8 @@ public class ViewController {
                 ap.setMaxSize(200, 200);
                 ap.getChildren().add(tf);
 
-                this.grid.add(ap, col, row);
-                this.gridCells.get(col).add(tf);
+                mGrid.add(ap, col, row);
+                mGridCells.get(col).add(tf);
             }
         }
     }
