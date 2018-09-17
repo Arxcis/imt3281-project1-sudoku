@@ -12,15 +12,10 @@ import javafx.stage.Stage;
 public class Main extends Application {
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
 	
         Scene scene = null;
-        try {
-            scene = ViewController.loadScene();
-        } catch(IOException e) {
-            System.out.println("IOException: " + e.getCause());
-            return; 
-        }
+        scene = ViewController.loadScene();
         primaryStage.setTitle("Sudoku");
 		primaryStage.setScene(scene);
 		primaryStage.show();
