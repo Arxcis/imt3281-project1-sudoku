@@ -2,7 +2,6 @@ package no.ntnu.imt3281.sudoku;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -14,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 
 public class ViewController {
 
@@ -25,9 +25,6 @@ public class ViewController {
 
         return scene;
     }
-
-    /** Direct reference to text fields in a 2D 9x9 array for easy lookup */
-    private ArrayList<ArrayList<TextField>> mGridCells;
 
     /** Should be the ONLY sudoku instance in the application */
     private Sudoku mSudoku;
@@ -82,30 +79,70 @@ public class ViewController {
         assert mGrid != null : "fx:id=\"grid\" was not injected: check your FXML file 'View.fxml'.";
 
         mSudoku = new Sudoku();
-        mGridCells = new ArrayList<>();
 
-        for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
-            mGridCells.add(new ArrayList<>());
-            for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
+        for (Integer col = 0; col < Sudoku.COL_SIZE; ++col) {
+            for (Integer row = 0; row < Sudoku.ROW_SIZE; ++row) {
 
-                Integer cellNumber = mSudoku.getElement(row, col);
+                Integer sudokuNumber = mSudoku.getElement(row, col);
+                TextField textfield = new TextField("");
 
-                TextField tf = new TextField(cellNumber.toString());
-                AnchorPane.setTopAnchor(tf, 0.0);
-                AnchorPane.setLeftAnchor(tf, 0.0);
-                AnchorPane.setRightAnchor(tf, 0.0);
-                AnchorPane.setBottomAnchor(tf, 0.0);
-                tf.setAlignment(Pos.CENTER);
+                if (sudokuNumber > -1) {
+                    textfield.setText(sudokuNumber.toString());
+                }
 
-                AnchorPane ap = new AnchorPane();
-                ap.setMinSize(0, 0);
-                ap.setPrefSize(50, 50);
-                ap.setMaxSize(200, 200);
-                ap.getChildren().add(tf);
+                AnchorPane.setTopAnchor(textfield, 0.0);
+                AnchorPane.setLeftAnchor(textfield, 0.0);
+                AnchorPane.setRightAnchor(textfield, 0.0);
+                AnchorPane.setBottomAnchor(textfield, 0.0);
+                textfield.setAlignment(Pos.CENTER);
+                textfield.setFont(Font.font("Verdana", 20));
 
-                mGrid.add(ap, col, row);
-                mGridCells.get(col).add(tf);
+                AnchorPane anchor = new AnchorPane();
+                anchor.setMinSize(50, 50);
+                anchor.setPrefSize(50, 50);
+                anchor.setMaxSize(200, 200);
+                anchor.getChildren().add(textfield);
+
+                mGrid.add(anchor, col, row);
+
+                final Integer localCol = col;
+                final Integer localRow = row;
+                textfield.addEventHandler(KeyEvent.KEY_RELEASED,
+                        event -> this.KeyReleasedInCell(event, localCol, localRow));
             }
         }
+    }
+
+    /** Format, Parse, Validate input. Clear cell if not valid */
+    void KeyReleasedInCell(KeyEvent event, Integer col, Integer row) {
+
+        TextField tf = (TextField) event.getTarget();
+        String text = tf.getText();
+
+        if (text.length() != 1) {
+            tf.clear();
+            return;
+        }
+
+        char candidateChar = text.charAt(0);
+        if (!Character.isDigit(candidateChar)) {
+            tf.clear();
+            return;
+        }
+
+        Integer candidate = Character.getNumericValue(candidateChar);
+        if (candidate == 0) {
+            tf.clear();
+            return;
+        }
+
+        try {
+            mSudoku.addNumber(row, col, candidate);
+        } catch (Exception e) {
+            tf.clear();
+            return;
+        }
+
+        tf.setText(candidate.toString());
     }
 }
