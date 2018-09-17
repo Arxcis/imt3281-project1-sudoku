@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.event.ActionEvent;
@@ -16,9 +16,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
-
 public class ViewController {
 
+    /** Load and build a scene from an FXML document */
     public static Scene loadScene() throws IOException {
         final URL fxml = ViewController.class.getResource("View.fxml");
         final Parent root = FXMLLoader.load(fxml);
@@ -47,8 +47,13 @@ public class ViewController {
 
     @FXML
     private GridPane grid;
-    
-    
+
+    /** Direct reference to text fields in a 2D 9x9 array for easy lookup */
+    private ArrayList<ArrayList<TextField>> gridCells;
+
+    /** The ONLY sudoku instance in the application */
+    private Sudoku sudoku;
+
     @FXML
     void OnClickExit(ActionEvent event) {
         System.out.println("OnClickExit");
@@ -69,14 +74,11 @@ public class ViewController {
         System.out.println("OnClickSave");
     }
 
-
     @FXML
     void OnKeyInCell(KeyEvent event) {
         System.out.println("On: " + event.getTarget().toString());
     }
-    
-    private ArrayList<ArrayList<TextField>> gridCells;
-    
+
     @FXML
     void initialize() {
         // 1. Assert that all references are bound
@@ -85,29 +87,31 @@ public class ViewController {
         assert btnLoad != null : "fx:id=\"btnLoad\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert btnExit != null : "fx:id=\"btnExit\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert grid != null : "fx:id=\"grid\" was not injected: check your FXML file 'View.fxml'.";
-        
+
+        this.sudoku = new Sudoku();
         this.gridCells = new ArrayList<>();
-        
-        Integer count = 0;
+
         for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
             gridCells.add(new ArrayList<>());
             for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
-                
-                TextField tf = new TextField((count++).toString());
+
+                Integer cellNumber = this.sudoku.getElement(row, col);
+
+                TextField tf = new TextField(cellNumber.toString());
                 AnchorPane.setTopAnchor(tf, 0.0);
                 AnchorPane.setLeftAnchor(tf, 0.0);
-                AnchorPane.setRightAnchor(tf,0.0);
+                AnchorPane.setRightAnchor(tf, 0.0);
                 AnchorPane.setBottomAnchor(tf, 0.0);
-                
+                tf.setAlignment(Pos.CENTER);
+
                 AnchorPane ap = new AnchorPane();
                 ap.setMinSize(0, 0);
                 ap.setPrefSize(50, 50);
                 ap.setMaxSize(200, 200);
                 ap.getChildren().add(tf);
-                
-                grid.add(ap, col, row);
-                // Keep references to cells for easy access later
-                gridCells.get(col).add(tf); 
+
+                this.grid.add(ap, col, row);
+                this.gridCells.get(col).add(tf);
             }
         }
     }
