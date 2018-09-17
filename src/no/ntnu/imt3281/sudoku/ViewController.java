@@ -116,33 +116,33 @@ public class ViewController {
     /** Format, Parse, Validate input. Clear cell if not valid */
     void KeyReleasedInCell(KeyEvent event, Integer col, Integer row) {
 
-        TextField tf = (TextField) event.getTarget();
-        String text = tf.getText();
+        TextField textfield = (TextField) event.getTarget();
+        String text = textfield.getText();
 
         if (text.length() != 1) {
-            tf.clear();
+            textfield.clear();
             return;
         }
 
         char candidateChar = text.charAt(0);
         if (!Character.isDigit(candidateChar)) {
-            tf.clear();
+            textfield.clear();
             return;
         }
 
         Integer candidate = Character.getNumericValue(candidateChar);
         if (candidate == 0) {
-            tf.clear();
+            textfield.clear();
             return;
         }
 
         try {
             mSudoku.addNumber(row, col, candidate);
         } catch (Exception e) {
-            tf.clear();
+            textfield.clear();
             return;
         }
 
-        tf.setText(candidate.toString());
+        textfield.setText(candidate.toString());
     }
 }
