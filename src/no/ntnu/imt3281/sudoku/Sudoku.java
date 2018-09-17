@@ -3,6 +3,8 @@ package no.ntnu.imt3281.sudoku;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+
 public class Sudoku {
     private List<List<Integer>> mSudokuBoard;
 
@@ -11,10 +13,30 @@ public class Sudoku {
     public static final int EMPTY_CELL = -1;
 
     /**
-     * Creates a new sudoku board from the given board
+     * Creates a new Sudoku board constructed from the supplied json string.
      *
-     * @param board The new board
+     * @param jsonString String containing the
+     * @return a new Sudoku board constructed from the supplied json string.
      */
+    public static Sudoku loadSudokuFromJson(final String jsonString) {
+        var board = new Sudoku();
+        var array = new JSONArray(jsonString);
+
+        for (int row = 0; row < array.length(); row++) {
+            var jsonRow = array.getJSONArray(row);
+
+            for (int col = 0; col < jsonRow.length(); col++) {
+                var value = jsonRow.getInt(col);
+                if (value != EMPTY_CELL) {
+                    board.addNumber(row, col, value);
+                }
+            }
+        }
+
+        return board;
+    }
+
+
     /**
      * Creates a new entirely empty Sudoku board.
      */
@@ -70,12 +92,12 @@ public class Sudoku {
         }
 
         // Check that row is a number from 0 to 8
-        if (!(row > 0 && row < ROW_SIZE)) {
+        if (row < 0 || row >= ROW_SIZE) {
             throw new BadNumberException("row is not a value from 0 to 8");
         }
 
         // Check that col is a number from 0 to 8
-        if (!(col > 0 && col < COL_SIZE)) {
+        if (col < 0 || col >= COL_SIZE) {
             throw new BadNumberException("col is not a value from 0 to 8");
         }
 
@@ -98,7 +120,7 @@ public class Sudoku {
         int colOffset = col / 3;
         for (int k = 0; k < 3; ++k) {
             for (int l = 0; l < 3; ++l) {
-                if (getElement(l + colOffset * 3, k + rowOffset * 3) == value) {
+                if (getElement(k + rowOffset * 3, l + colOffset * 3) == value) {
                     throw new BadNumberException("Number already exists in this 3x3 subgrid");
                 }
             }
