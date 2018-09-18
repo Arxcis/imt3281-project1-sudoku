@@ -3,18 +3,43 @@ package no.ntnu.imt3281.sudoku;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+
 public class Sudoku {
     private List<List<Integer>> mSudokuBoard;
 
     public static final int ROW_SIZE = 9;
     public static final int COL_SIZE = 9;
+    public static final int GRID_COUNT = 9;
     public static final int EMPTY_CELL = -1;
 
     /**
-     * Creates a new sudoku board from the given board
+     * Creates a new Sudoku board constructed from the supplied json string.
      *
-     * @param board The new board
+     * @param jsonString String containing the
+     * @return a new Sudoku board constructed from the supplied json string.
      */
+    public static Sudoku loadSudokuFromJson(final String jsonString) {
+        var board = new Sudoku();
+        var array = new JSONArray(jsonString);
+
+        for (int row = 0; row < array.length(); row++) {
+            var jsonRow = array.getJSONArray(row);
+
+            for (int col = 0; col < jsonRow.length(); col++) {
+                var value = jsonRow.getInt(col);
+
+                // We are ignoring empty cells so we can reuse the validation logic in addNumber
+                // (which don't accept EMPTY_CELL).
+                if (value != EMPTY_CELL) {
+                    board.addNumber(row, col, value);
+                }
+            }
+        }
+
+        return board;
+    }
+
     /**
      * Creates a new entirely empty Sudoku board.
      */
@@ -60,51 +85,64 @@ public class Sudoku {
      * @param row   The row containing the element.
      * @param col   The column containing the element.
      * @param value The value we're trying to set the element to be.
+     *
+     * @exception Throws IllegalArgumentException if value is not in range [1-9]
+     *
+     * @exception Throws BadNumberException if value already exists within the row,
+     *                   column, or sub grid it is entered into.
      */
     public void addNumber(int row, int col, int value) {
 
         // Check if element is locked
         // Check that value is a number from 1 to 9
         if (value < 1 || value > 9) {
-            throw new BadNumberException("Value is not a number from 1 to 9");
+            throw new IllegalArgumentException();
         }
 
-        // Check that row is a number from 0 to 8
-        if (!(row > 0 && row < ROW_SIZE)) {
-            throw new BadNumberException("row is not a value from 0 to 8");
-        }
+        Class<?>[] iterators = { RowIterator.class, ColumnIterator.class, SubGridIterator.class };
+        int[] indices = { row, col, (row / 3) * 3 + (col / 3) };
 
-        // Check that col is a number from 0 to 8
-        if (!(col > 0 && col < COL_SIZE)) {
-            throw new BadNumberException("col is not a value from 0 to 8");
-        }
-
-        // Check whether the number already exists in this row
-        for (int i = 0; i < ROW_SIZE; ++i) {
-            if (getElement(i, col) == value) {
-                throw new BadNumberException("Number already exists in this row");
-            }
-        }
-
-        // Check whether the number already exists in this column
-        for (int j = 0; j < COL_SIZE; ++j) {
-            if (getElement(row, j) == value) {
-                throw new BadNumberException("Number already exists in this column");
-            }
-        }
-
-        // Check whether the number already exists in this 3x3 subgrid
-        int rowOffset = row / 3;
-        int colOffset = col / 3;
-        for (int k = 0; k < 3; ++k) {
-            for (int l = 0; l < 3; ++l) {
-                if (getElement(l + colOffset * 3, k + rowOffset * 3) == value) {
-                    throw new BadNumberException("Number already exists in this 3x3 subgrid");
+        for (int i = 0; i < iterators.length; i++) {
+            var it = iterator(iterators[i], indices[i]);
+            while (it.hasNext()) {
+                var val = it.peek();
+                if (val == value) {
+                    throw new BadNumberException(it);
                 }
+                it.next();
             }
         }
 
-        // If all tests are good, set the element's value to equal param value
         setElement(row, col, value);
+    }
+
+    /**
+     * Gets an iterator to sudoku board. The iteration strategy is indicated by the
+     * type parameter supplied.
+     *
+     * @param type  The type indicating the iteration strategy to be used. Must be
+     *              RowIterator, ColumnIterator or SubGridIterator.
+     *
+     * @param value Indicates the selection of the iteration. If type is RowIterator
+     *              this is the row you wish to iterate over, in case of
+     *              ColumnIterator it is the column to iterate over, lastly in case
+     *              of SubGrid it is the id of the sub grid to iterate over.
+     *
+     * @return An iterator using the strategy indicated by the type parameter.
+     *
+     * @exception Throws IllegalArgumentException if an unsupported type is
+     *                   supplied. Type must be: RowIterator, ColumnIterator or
+     *                   SubGridIterator. Throws IllegalArgumentException if an
+     *                   unsupported type is supplied.
+     */
+    protected SudokuIterator iterator(Class<?> type, int value) {
+        if (type == RowIterator.class)
+            return new RowIterator(mSudokuBoard, value);
+        else if (type == ColumnIterator.class)
+            return new ColumnIterator(mSudokuBoard, value);
+        else if (type == SubGridIterator.class)
+            return new SubGridIterator(mSudokuBoard, value);
+
+        throw new IllegalArgumentException("Class must be Row-, Column- or SubGrid-Iterator");
     }
 }
