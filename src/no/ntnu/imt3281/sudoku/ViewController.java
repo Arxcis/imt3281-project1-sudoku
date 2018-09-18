@@ -117,37 +117,41 @@ public class ViewController {
     /** Format, Parse, Validate input. Clear cell if not valid */
     void ValueChangedInCell(TextField textfield, String oldval, String newval, Integer col, Integer row) {
 
-        String text = textfield.getText();
-        System.out.print("\nTest: "  + text + " Oldval: " + oldval + "  NEwval: " + newval + "   -->  ");
+        System.out.print("\nTest -> Oldval: " + oldval + "  Newval: " + newval + "   -->  ");
         
-        // TODO - Whenever a user removes a valid number from the GUI, it also need to be removed from the Sudoku class - JSolsvik 18.09.18
-        
-        if (oldval == newval) {
-            this.errorValueChangedInCell(textfield, "oldval == newval");
+        // If new value is empty, and oldval was valid - means that we have to remove an entry from the Sudoku Data
+        if (newval.length() == 0 && oldval.length() == 1) {
+            // TODO - Whenever a user removes a valid number from the GUI, it also need to be removed from the Sudoku class - JSolsvik 18.09.18
+            this.clearCellLogMessage(textfield, "newval.length() == 0 && oldval.length() == 1");
             return;
         }
         
-        if (text.length() != 1) {
-            this.errorValueChangedInCell(textfield, "text.length() != 1");
+        if (newval.length() == 0 && oldval.length() > 1) {
+            this.clearCellLogMessage(textfield, "newval.length() == 0 && oldval.length() > 1");
             return;
         }
         
-        final char candidateChar = text.charAt(0);
+        if (newval.length() > 1) {
+            this.clearCellLogMessage(textfield, "newval.length() > 1");
+            return;
+        }
+        
+        final char candidateChar = newval.charAt(0);
         if (!Character.isDigit(candidateChar)) {
-            this.errorValueChangedInCell(textfield, "!Character.isDigit(candidateChar)");
+            this.clearCellLogMessage(textfield, "!Character.isDigit(candidateChar)");
             return;
         }
 
         final Integer candidate = Character.getNumericValue(candidateChar);
         if (candidate == 0) {
-            this.errorValueChangedInCell(textfield, "candidate == 0");
+            this.clearCellLogMessage(textfield, "candidate == 0");
             return;
         }
         
         try {
             mSudoku.addNumber(row, col, candidate);
         } catch (Exception e) {
-            this.errorValueChangedInCell(textfield, "catch (Exception e)");
+            this.clearCellLogMessage(textfield, "mSudoku.addNumber catch (Exception e)");
             return;
         }
         
@@ -155,8 +159,7 @@ public class ViewController {
         textfield.setText(candidate.toString());
     }
     
-    void errorValueChangedInCell(TextField textfield, String message) {
-
+    void clearCellLogMessage(TextField textfield, String message) {
         Platform.runLater(() -> { 
             textfield.clear(); 
         });         
