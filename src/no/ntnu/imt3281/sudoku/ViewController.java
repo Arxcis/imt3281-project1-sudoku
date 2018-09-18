@@ -105,44 +105,54 @@ public class ViewController {
 
                 mGrid.add(anchor, col, row);
 
-                final Integer localCol = col;
-                final Integer localRow = row;
-                textfield.addEventHandler(KeyEvent.KEY_RELEASED,
-                        event -> this.KeyReleasedInCell(event, localCol, localRow));
+                final Integer localcol = col;
+                final Integer localrow = row;
+                textfield.textProperty().addListener(
+                        (target, oldvalue, newvalue) -> this.ValueChangedInCell(textfield, oldvalue, newvalue, localcol, localrow));
             }
         }
     }
 
     /** Format, Parse, Validate input. Clear cell if not valid */
-    void KeyReleasedInCell(KeyEvent event, Integer col, Integer row) {
-
-        TextField textfield = (TextField) event.getTarget();
-        String text = textfield.getText();
-
-        if (text.length() != 1) {
-            textfield.clear();
+    void ValueChangedInCell(TextField textfield, String oldval, String newval, Integer col, Integer row) {
+        
+        // TODO - Whenever a user removes a valid number from the GUI, it also need to be removed from the Sudoku class - JSolsvik 18.09.18
+        
+        if (oldval == newval) {
             return;
         }
-
+        
+        String text = textfield.getText();
+        System.out.print("\nTest: "  + text + " -->  ");
+        if (text.length() != 1) {
+            textfield.clear();
+            System.out.println("text.length() != 1");
+            return;
+        }
+        
         char candidateChar = text.charAt(0);
         if (!Character.isDigit(candidateChar)) {
             textfield.clear();
+            System.out.println("!Character.isDigit(candidateChar)");
             return;
         }
 
         Integer candidate = Character.getNumericValue(candidateChar);
         if (candidate == 0) {
             textfield.clear();
+            System.out.println("candidate == 0");
             return;
         }
-
+        
         try {
             mSudoku.addNumber(row, col, candidate);
         } catch (Exception e) {
             textfield.clear();
+            System.out.println("catch (Exception e)");
             return;
         }
-
+        
+        System.out.println("SUCCESSS!!!!");
         textfield.setText(candidate.toString());
     }
 }
