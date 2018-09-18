@@ -85,83 +85,83 @@ public class ViewController {
             for (Integer row = 0; row < Sudoku.ROW_SIZE; ++row) {
 
                 Integer sudokuNumber = mSudoku.getElement(row, col);
-                TextField textfield = new TextField("");
+                TextField cell = new TextField("");
 
                 if (sudokuNumber > -1) {
-                    textfield.setText(sudokuNumber.toString());
+                    cell.setText(sudokuNumber.toString());
                 }
 
-                AnchorPane.setTopAnchor(textfield, 0.0);
-                AnchorPane.setLeftAnchor(textfield, 0.0);
-                AnchorPane.setRightAnchor(textfield, 0.0);
-                AnchorPane.setBottomAnchor(textfield, 0.0);
-                textfield.setAlignment(Pos.CENTER);
-                textfield.setFont(Font.font("Verdana", 20));
+                AnchorPane.setTopAnchor(cell, 0.0);
+                AnchorPane.setLeftAnchor(cell, 0.0);
+                AnchorPane.setRightAnchor(cell, 0.0);
+                AnchorPane.setBottomAnchor(cell, 0.0);
+                cell.setAlignment(Pos.CENTER);
+                cell.setFont(Font.font("Verdana", 20));
 
                 AnchorPane anchor = new AnchorPane();
                 anchor.setMinSize(50, 50);
                 anchor.setPrefSize(50, 50);
                 anchor.setMaxSize(200, 200);
-                anchor.getChildren().add(textfield);
+                anchor.getChildren().add(cell);
 
                 mGrid.add(anchor, col, row);
 
                 final Integer localcol = col;
                 final Integer localrow = row;
-                textfield.textProperty().addListener(
-                        (target, oldvalue, newvalue) -> this.ValueChangedInCell(textfield, oldvalue, newvalue, localcol, localrow));
+                cell.textProperty().addListener(
+                        (target, oldvalue, newvalue) -> this.ValueChangedInCell(cell, oldvalue, newvalue, localcol, localrow));
             }
         }
     }
 
     /** Format, Parse, Validate input. Clear cell if not valid */
-    void ValueChangedInCell(TextField textfield, String oldval, String newval, Integer col, Integer row) {
+    void ValueChangedInCell(TextField cell, String oldval, String newval, Integer col, Integer row) {
 
         System.out.print("\nTest -> Oldval: " + oldval + "  Newval: " + newval + "   -->  ");
         
         // If new value is empty, and oldval was valid - means that we have to remove an entry from the Sudoku Data
         if (newval.length() == 0 && oldval.length() == 1) {
             // TODO - Whenever a user removes a valid number from the GUI, it also need to be removed from the Sudoku class - JSolsvik 18.09.18
-            this.clearCellLogMessage(textfield, "newval.length() == 0 && oldval.length() == 1");
+            this.clearCellLogMessage(cell, "newval.length() == 0 && oldval.length() == 1");
             return;
         }
         
         if (newval.length() == 0 && oldval.length() > 1) {
-            this.clearCellLogMessage(textfield, "newval.length() == 0 && oldval.length() > 1");
+            this.clearCellLogMessage(cell, "newval.length() == 0 && oldval.length() > 1");
             return;
         }
         
         if (newval.length() > 1) {
-            this.clearCellLogMessage(textfield, "newval.length() > 1");
+            this.clearCellLogMessage(cell, "newval.length() > 1");
             return;
         }
         
         final char candidateChar = newval.charAt(0);
         if (!Character.isDigit(candidateChar)) {
-            this.clearCellLogMessage(textfield, "!Character.isDigit(candidateChar)");
+            this.clearCellLogMessage(cell, "!Character.isDigit(candidateChar)");
             return;
         }
 
         final Integer candidate = Character.getNumericValue(candidateChar);
         if (candidate == 0) {
-            this.clearCellLogMessage(textfield, "candidate == 0");
+            this.clearCellLogMessage(cell, "candidate == 0");
             return;
         }
         
         try {
             mSudoku.addNumber(row, col, candidate);
         } catch (Exception e) {
-            this.clearCellLogMessage(textfield, "mSudoku.addNumber catch (Exception e)");
+            this.clearCellLogMessage(cell, "mSudoku.addNumber catch (Exception e)");
             return;
         }
         
         System.out.println("SUCCESSS!!!!");
-        textfield.setText(candidate.toString());
+        cell.setText(candidate.toString());
     }
     
-    void clearCellLogMessage(TextField textfield, String message) {
+    void clearCellLogMessage(TextField cell, String message) {
         Platform.runLater(() -> { 
-            textfield.clear(); 
+            cell.clear(); 
         });         
         System.out.println(message);
     }
