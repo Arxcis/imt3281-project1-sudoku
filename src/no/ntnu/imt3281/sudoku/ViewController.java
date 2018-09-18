@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -115,44 +116,50 @@ public class ViewController {
 
     /** Format, Parse, Validate input. Clear cell if not valid */
     void ValueChangedInCell(TextField textfield, String oldval, String newval, Integer col, Integer row) {
+
+        String text = textfield.getText();
+        System.out.print("\nTest: "  + text + " Oldval: " + oldval + "  NEwval: " + newval + "   -->  ");
         
         // TODO - Whenever a user removes a valid number from the GUI, it also need to be removed from the Sudoku class - JSolsvik 18.09.18
         
         if (oldval == newval) {
+            this.errorValueChangedInCell(textfield, "oldval == newval");
             return;
         }
         
-        String text = textfield.getText();
-        System.out.print("\nTest: "  + text + " -->  ");
         if (text.length() != 1) {
-            textfield.clear();
-            System.out.println("text.length() != 1");
+            this.errorValueChangedInCell(textfield, "text.length() != 1");
             return;
         }
         
-        char candidateChar = text.charAt(0);
+        final char candidateChar = text.charAt(0);
         if (!Character.isDigit(candidateChar)) {
-            textfield.clear();
-            System.out.println("!Character.isDigit(candidateChar)");
+            this.errorValueChangedInCell(textfield, "!Character.isDigit(candidateChar)");
             return;
         }
 
-        Integer candidate = Character.getNumericValue(candidateChar);
+        final Integer candidate = Character.getNumericValue(candidateChar);
         if (candidate == 0) {
-            textfield.clear();
-            System.out.println("candidate == 0");
+            this.errorValueChangedInCell(textfield, "candidate == 0");
             return;
         }
         
         try {
             mSudoku.addNumber(row, col, candidate);
         } catch (Exception e) {
-            textfield.clear();
-            System.out.println("catch (Exception e)");
+            this.errorValueChangedInCell(textfield, "catch (Exception e)");
             return;
         }
         
         System.out.println("SUCCESSS!!!!");
         textfield.setText(candidate.toString());
+    }
+    
+    void errorValueChangedInCell(TextField textfield, String message) {
+
+        Platform.runLater(() -> { 
+            textfield.clear(); 
+        });         
+        System.out.println(message);
     }
 }
