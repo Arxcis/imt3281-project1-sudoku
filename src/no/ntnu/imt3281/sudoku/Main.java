@@ -10,7 +10,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+
+    /**
+     * Helper in stop() to shut down threads
+     */
+    final ExecutorService exec = Executors.newCachedThreadPool();
     
+    /**
+     * @param primaryStage
+     */
     @Override
     public void start(Stage primaryStage) throws IOException {
 	
@@ -20,10 +28,10 @@ public class Main extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
     }
-
-    // Stop() cleanup - @ref  https://stackoverflow.com/a/46060236 - 13.09.18    
-    private final ExecutorService exec = Executors.newCachedThreadPool();
-
+    
+    /**
+     * @see https://stackoverflow.com/a/46060236 - 13.09.18    
+     */
     @Override
     public void stop() throws InterruptedException {
         exec.shutdown();
@@ -33,6 +41,7 @@ public class Main extends Application {
             exec.shutdownNow();
         }       
     }
+    
     public static void main(String[] args) {
         Application.launch(args);
     }

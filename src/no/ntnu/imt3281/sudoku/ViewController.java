@@ -2,22 +2,24 @@ package no.ntnu.imt3281.sudoku;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 
 public class ViewController {
-
-    /** Load and build a scene from an FXML document */
+    /** 
+     * Load and build a scene from an FXML document 
+     * @return fxml scene
+     */
     public static Scene loadScene() throws IOException {
         final URL fxml = ViewController.class.getResource("View.fxml");
         final Parent root = FXMLLoader.load(fxml);
@@ -26,26 +28,25 @@ public class ViewController {
         return scene;
     }
 
-    /** Direct reference to text fields in a 2D 9x9 array for easy lookup */
-    private ArrayList<ArrayList<TextField>> mGridCells;
+    /** 
+     * Should be the only Sudoku instance in the application 
+     */
+    Sudoku mSudoku;
+    
+    @FXML /** fx:id="mBtnNewGame" */
+    Button mBtnNewGame;
 
-    /** Should be the ONLY sudoku instance in the application */
-    private Sudoku mSudoku;
+    @FXML /** fx:id="mBtnSave" */
+    Button mBtnSave;
 
-    @FXML // fx:id="mBtnNewGame"
-    private Button mBtnNewGame;
+    @FXML /** fx:id="mBtnLoad" */
+    Button mBtnLoad;
 
-    @FXML // fx:id="mBtnSave"
-    private Button mBtnSave;
+    @FXML /** fx:id="mBtnExit" */
+    Button mBtnExit;
 
-    @FXML // fx:id="mBtnLoad"
-    private Button mBtnLoad;
-
-    @FXML // fx:id="mBtnExit"
-    private Button mBtnExit;
-
-    @FXML // fx:id="mGrid"
-    private GridPane mGrid;
+    @FXML /** fx:id="mGrid" */
+    GridPane mGrid;
 
     @FXML
     void OnClickExit(ActionEvent event) {
@@ -68,12 +69,8 @@ public class ViewController {
     }
 
     @FXML
-    void OnKeyInCell(KeyEvent event) {
-        System.out.println("On: " + event.getTarget().toString());
-    }
-
-    @FXML
     void initialize() {
+
         // 1. Assert that all references are bound
         assert mBtnNewGame != null : "fx:id=\"btnNewGame\" was not injected: check your FXML file 'sudoku.fxml'.";
         assert mBtnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'sudoku.fxml'.";
@@ -82,30 +79,102 @@ public class ViewController {
         assert mGrid != null : "fx:id=\"grid\" was not injected: check your FXML file 'View.fxml'.";
 
         mSudoku = new Sudoku();
-        mGridCells = new ArrayList<>();
 
         for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
-            mGridCells.add(new ArrayList<>());
             for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
 
-                Integer cellNumber = mSudoku.getElement(row, col);
+                int sudokuNumber = mSudoku.getElement(row, col);
+                TextField cell = new TextField("");
 
-                TextField tf = new TextField(cellNumber.toString());
-                AnchorPane.setTopAnchor(tf, 0.0);
-                AnchorPane.setLeftAnchor(tf, 0.0);
-                AnchorPane.setRightAnchor(tf, 0.0);
-                AnchorPane.setBottomAnchor(tf, 0.0);
-                tf.setAlignment(Pos.CENTER);
+                if (sudokuNumber > -1) {
+                    cell.setText(Integer.toString(sudokuNumber));
+                }
 
-                AnchorPane ap = new AnchorPane();
-                ap.setMinSize(0, 0);
-                ap.setPrefSize(50, 50);
-                ap.setMaxSize(200, 200);
-                ap.getChildren().add(tf);
+                AnchorPane.setTopAnchor(cell, 0.0);
+                AnchorPane.setLeftAnchor(cell, 0.0);
+                AnchorPane.setRightAnchor(cell, 0.0);
+                AnchorPane.setBottomAnchor(cell, 0.0);
+                cell.setAlignment(Pos.CENTER);
+                cell.setFont(Font.font("Verdana", 20));
 
-                mGrid.add(ap, col, row);
-                mGridCells.get(col).add(tf);
+                AnchorPane anchor = new AnchorPane();
+                anchor.setMinSize(50, 50);
+                anchor.setPrefSize(50, 50);
+                anchor.setMaxSize(200, 200);
+                anchor.getChildren().add(cell);
+
+                mGrid.add(anchor, col, row);
+
+                final int finalrow = row;
+                final int finalcol = col;
+                cell.textProperty().addListener(
+                    (__, ___, newval) -> 
+                        this.ValueChangedInCell(cell, newval, finalrow, finalcol));
             }
         }
+    }
+
+    /**
+     * Parse, Validate input. Clear cell if not valid 
+     * @param cell fxml target 
+     * @param newval latest user input
+     * @param row sudoku row index
+     * @param col sudoku column index
+     */
+    void ValueChangedInCell(TextField cell, String newval, int row,  int col) {
+        LOG_DEBUG("Newval: " + newval);
+        
+        // 1. If newval is empty we set the
+        if (newval.equals("")) {
+            mSudoku.setElement(row, col, Sudoku.EMPTY_CELL);
+            LOG_DEBUG("Newval == \"\" -> setting cell to Sudoku.EMPTY_CELL");
+            ViewController.clearCell(cell);
+            return;
+        }
+         
+        // 2. Parse string -> int
+        int candidate = 0;
+        try {
+            candidate = Integer.parseInt(newval);
+        } catch (NumberFormatException e) {
+            LOG_DEBUG("Integer.parseInt threw NumberFormatException: " + e.toString());
+            ViewController.clearCell(cell);
+            return;
+        }
+        
+        // 3. Add number to Sudoku 
+        try {
+            mSudoku.addNumber(row, col, candidate);
+        } catch (BadNumberException e) {
+            LOG_DEBUG("mSudoku.addNumber threw BadNumberException: " + e.toString());
+            ViewController.clearCell(cell);
+            // TODO Color cell red
+            return;
+        } catch (IllegalArgumentException e) {
+            LOG_DEBUG("mSudoku.addNumber threw IllegalArgumentException: " + e.toString());
+            ViewController.clearCell(cell);
+            return;
+        }
+
+        // 4. Number added
+        LOG_DEBUG("Number added: " + Integer.toString(candidate)); 
+    }
+    
+    /**
+     * @param cell fxml target
+     */
+    static void clearCell(TextField cell) {
+        Platform.runLater(() -> { 
+            cell.clear(); 
+        });
+    }
+    
+    /**
+     * TODO Move this to a more globalized place
+     * @param message
+     */
+    static void LOG_DEBUG(String message) {
+        boolean CONSOLE_DEBUG = false;
+        if (CONSOLE_DEBUG) System.out.println(message);
     }
 }
