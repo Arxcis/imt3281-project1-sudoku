@@ -1,19 +1,19 @@
 package no.ntnu.imt3281.sudoku;
 
+
 import java.io.IOException;
 import java.net.URL;
+
+import javafx.scene.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.*;
+import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.application.Platform;
+import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 
 public class ViewController {
     /** 
@@ -23,11 +23,15 @@ public class ViewController {
     public static Scene loadScene() throws IOException {
         final URL fxml = ViewController.class.getResource("View.fxml");
         final Parent root = FXMLLoader.load(fxml);
-        final Scene scene = new Scene(root);
-
-        return scene;
+        
+        mScene = new Scene(root);
+        mScene.getStylesheets().add(ViewController.class.getResource("View.css").toString());
+        
+        return mScene;
     }
-
+    
+    static Scene mScene;
+    
     /** 
      * Should be the only Sudoku instance in the application 
      */
@@ -60,6 +64,10 @@ public class ViewController {
 
     @FXML
     void OnClickNewGame(ActionEvent event) {
+        
+        mScene.getStylesheets().clear();
+        mScene.getStylesheets().add(this.getClass().getResource("View.css").toString());
+        
         System.out.println("OnClickNewGame");
     }
 
@@ -79,37 +87,46 @@ public class ViewController {
         assert mGrid != null : "fx:id=\"grid\" was not injected: check your FXML file 'View.fxml'.";
 
         mSudoku = new Sudoku();
+        
+        final PseudoClass right = PseudoClass.getPseudoClass("right");
+        final PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
 
         for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
             for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
 
-                int sudokuNumber = mSudoku.getElement(row, col);
-                TextField cell = new TextField("");
-
+                // 1. Create cell as a textField
+                final TextField cell = new TextField("");
+                final int sudokuNumber = mSudoku.getElement(row, col);
+                cell.getStyleClass().add("cell");
                 if (sudokuNumber > -1) {
                     cell.setText(Integer.toString(sudokuNumber));
                 }
-
-                AnchorPane.setTopAnchor(cell, 0.0);
-                AnchorPane.setLeftAnchor(cell, 0.0);
-                AnchorPane.setRightAnchor(cell, 0.0);
-                AnchorPane.setBottomAnchor(cell, 0.0);
-                cell.setAlignment(Pos.CENTER);
-                cell.setFont(Font.font("Verdana", 20));
-
-                AnchorPane anchor = new AnchorPane();
-                anchor.setMinSize(50, 50);
-                anchor.setPrefSize(50, 50);
-                anchor.setMaxSize(200, 200);
-                anchor.getChildren().add(cell);
-
-                mGrid.add(anchor, col, row);
-
+                
+                // 2. Setup callback function when user changes value in cell
                 final int finalrow = row;
                 final int finalcol = col;
                 cell.textProperty().addListener(
                     (__, ___, newval) -> 
                         this.ValueChangedInCell(cell, newval, finalrow, finalcol));
+                
+                // 3. Create anchor pane as a container for the cell. 
+                // The anchor pane makes the cell stretch to fill available space
+                final AnchorPane anchor = new AnchorPane();
+                AnchorPane.setTopAnchor(cell, 0.0);
+                AnchorPane.setLeftAnchor(cell, 0.0);
+                AnchorPane.setRightAnchor(cell, 0.0);
+                AnchorPane.setBottomAnchor(cell, 0.0);
+                anchor.getChildren().add(cell);
+                anchor.setMinSize(50, 50);
+                anchor.setPrefSize(50, 50);
+                anchor.setMaxSize(200, 200);
+                anchor.getStyleClass().add("anchor");
+                // Pseudo class inspiration @see https://stackoverflow.com/a/34225599 22.09.18
+                anchor.pseudoClassStateChanged(right, col == 2 || col == 5);
+                anchor.pseudoClassStateChanged(bottom, row == 2 || row == 5);
+
+                // 4. Add anchor to grid
+                mGrid.add(anchor, col, row);
             }
         }
     }
