@@ -1,5 +1,5 @@
 /* Inspiration for using pseudo classes @see https://stackoverflow.com/a/34225599 - 12.09.18 */
-/* javafx css reference 				@see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/doc-files/cssref.html 22.09.18 */
+/* javafx css reference                 @see https://docs.oracle.com/javase/8/javafx/api/javafx/scene/doc-files/cssref.html 22.09.18 */
 
 .anchor {
 
@@ -9,30 +9,30 @@
 }
 
 .anchor:right {
-	-fx-border-width: 0 2.6 0 0;
+    -fx-border-width: 0 2.6 0 0;
 }
 
 .anchor:bottom {
-	-fx-border-width: 0 0 2.6 0;
+    -fx-border-width: 0 0 2.6 0;
 }
 
 .anchor:right:bottom {
-	-fx-border-width: 0 2.6 2.6 0;
+    -fx-border-width: 0 2.6 2.6 0;
 }
 
 .cell {
     /* Defines a black border around the standard color -fx-base */
-	-fx-alignment: center;
+    -fx-alignment: center;
 
     -fx-background-insets: 4.3px;
     -fx-background-radius: 2.5;
     
     -fx-border-color: #8e8e8e;
-	-fx-border-width: 0.75;
-	-fx-border-radius: 2.5px;
-	
-	-fx-font-family: Verdana;
-	-fx-font-size: 23px;
+    -fx-border-width: 0.75;
+    -fx-border-radius: 2.5px;
+    
+    -fx-font-family: Verdana;
+    -fx-font-size: 23px;
 }
 
 
