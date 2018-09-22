@@ -35,5 +35,6 @@
     -fx-font-size: 23px;
 }
 
-
-
+.cell:error {
+    -fx-text-fill: #f44242;
+}
