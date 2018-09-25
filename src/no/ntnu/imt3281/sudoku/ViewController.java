@@ -1,42 +1,43 @@
 package no.ntnu.imt3281.sudoku;
 
-
 import java.io.IOException;
 import java.net.URL;
 
-import javafx.scene.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.scene.control.*;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.application.Platform;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 
 public class ViewController {
-    /** 
-     * Load and build a scene from an FXML document 
+    /**
+     * Load and build a scene from an FXML document
+     *
      * @return fxml scene
      */
     public static Scene loadScene() throws IOException {
         final URL fxml = ViewController.class.getResource("View.fxml");
         final Parent root = FXMLLoader.load(fxml);
-        
+
         mScene = new Scene(root);
         mScene.getStylesheets().add(ViewController.class.getResource("View.css").toString());
-        
+
         return mScene;
     }
-    
+
     static Scene mScene;
-    
-    /** 
-     * Should be the only Sudoku instance in the application 
+
+    /**
+     * Should be the only Sudoku instance in the application
      */
     Sudoku mSudoku;
-    
+
     @FXML /** fx:id="mBtnNewGame" */
     Button mBtnNewGame;
 
@@ -64,10 +65,10 @@ public class ViewController {
 
     @FXML
     void OnClickNewGame(ActionEvent event) {
-        
+
         mScene.getStylesheets().clear();
         mScene.getStylesheets().add(this.getClass().getResource("View.css").toString());
-        
+
         System.out.println("OnClickNewGame");
     }
 
@@ -87,7 +88,7 @@ public class ViewController {
         assert mGrid != null : "fx:id=\"grid\" was not injected: check your FXML file 'View.fxml'.";
 
         mSudoku = new Sudoku();
-        
+
         final PseudoClass right = PseudoClass.getPseudoClass("right");
         final PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
 
@@ -101,15 +102,14 @@ public class ViewController {
                 if (sudokuNumber > -1) {
                     cell.setText(Integer.toString(sudokuNumber));
                 }
-                
+
                 // 2. Setup callback function when user changes value in cell
                 final int finalrow = row;
                 final int finalcol = col;
-                cell.textProperty().addListener(
-                    (__, ___, newval) -> 
-                        this.ValueChangedInCell(cell, newval, finalrow, finalcol));
-                
-                // 3. Create anchor pane as a container for the cell. 
+                cell.textProperty()
+                        .addListener((__, ___, newval) -> this.ValueChangedInCell(cell, newval, finalrow, finalcol));
+
+                // 3. Create anchor pane as a container for the cell.
                 // The anchor pane makes the cell stretch to fill available space
                 final AnchorPane anchor = new AnchorPane();
                 AnchorPane.setTopAnchor(cell, 0.0);
@@ -132,15 +132,16 @@ public class ViewController {
     }
 
     /**
-     * Parse, Validate input. Clear cell if not valid 
-     * @param cell fxml target 
+     * Parse, Validate input. Clear cell if not valid
+     *
+     * @param cell   fxml target
      * @param newval latest user input
-     * @param row sudoku row index
-     * @param col sudoku column index
+     * @param row    sudoku row index
+     * @param col    sudoku column index
      */
-    void ValueChangedInCell(TextField cell, String newval, int row,  int col) {
+    void ValueChangedInCell(TextField cell, String newval, int row, int col) {
         LOG_DEBUG("Newval: " + newval);
-        
+
         // 1. If newval is empty we set the
         if (newval.equals("")) {
             mSudoku.setElement(row, col, Sudoku.EMPTY_CELL);
@@ -148,7 +149,7 @@ public class ViewController {
             ViewController.clearCell(cell);
             return;
         }
-         
+
         // 2. Parse string -> int
         int candidate = 0;
         try {
@@ -158,8 +159,8 @@ public class ViewController {
             ViewController.clearCell(cell);
             return;
         }
-        
-        // 3. Add number to Sudoku 
+
+        // 3. Add number to Sudoku
         try {
             mSudoku.addNumber(row, col, candidate);
         } catch (BadNumberException e) {
@@ -174,24 +175,26 @@ public class ViewController {
         }
 
         // 4. Number added
-        LOG_DEBUG("Number added: " + Integer.toString(candidate)); 
+        LOG_DEBUG("Number added: " + Integer.toString(candidate));
     }
-    
+
     /**
      * @param cell fxml target
      */
     static void clearCell(TextField cell) {
-        Platform.runLater(() -> { 
-            cell.clear(); 
+        Platform.runLater(() -> {
+            cell.clear();
         });
     }
-    
+
     /**
      * TODO Move this to a more globalized place
+     *
      * @param message
      */
     static void LOG_DEBUG(String message) {
         boolean CONSOLE_DEBUG = false;
-        if (CONSOLE_DEBUG) System.out.println(message);
+        if (CONSOLE_DEBUG)
+            System.out.println(message);
     }
 }
