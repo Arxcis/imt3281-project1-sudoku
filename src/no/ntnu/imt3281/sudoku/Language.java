@@ -4,13 +4,13 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Manage Language strings. Access from anywhere.
+ * Manage Language strings. Access from anywhere in Sudoku package.
  */
 public class Language {
     /*
      * Path to language bundle
      */
-    private static final String bundlePath = "no.ntnu.imt3281.sudoku.LanguageBundle"; // @TODO Get from config file
+    private static final String bundlePath = "no.ntnu.imt3281.sudoku.LanguageBundle";
     
     /*
      * Resource bundle differs based on default locale
