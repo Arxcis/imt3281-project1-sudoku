@@ -88,10 +88,11 @@ public class ViewController {
         assert mGrid != null : "fx:id=\"grid\" was not injected: check your FXML file 'View.fxml'.";
 
         mSudoku = new Sudoku();
-
-        final PseudoClass right = PseudoClass.getPseudoClass("right");
-        final PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
-
+        
+        final PseudoClass cssright = PseudoClass.getPseudoClass("right");
+        final PseudoClass cssbottom = PseudoClass.getPseudoClass("bottom");
+        final PseudoClass csserror = PseudoClass.getPseudoClass("error");
+        
         for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
             for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
 
@@ -106,10 +107,11 @@ public class ViewController {
                 // 2. Setup callback function when user changes value in cell
                 final int finalrow = row;
                 final int finalcol = col;
-                cell.textProperty()
-                        .addListener((__, ___, newval) -> this.ValueChangedInCell(cell, newval, finalrow, finalcol));
-
-                // 3. Create anchor pane as a container for the cell.
+                cell.textProperty().addListener(
+                    (__, ___, newval) -> 
+                        this.ValueChangedInCell(cell, newval, finalrow, finalcol, csserror));
+                
+                // 3. Create anchor pane as a container for the cell. 
                 // The anchor pane makes the cell stretch to fill available space
                 final AnchorPane anchor = new AnchorPane();
                 AnchorPane.setTopAnchor(cell, 0.0);
@@ -122,8 +124,8 @@ public class ViewController {
                 anchor.setMaxSize(200, 200);
                 anchor.getStyleClass().add("anchor");
                 // Pseudo class inspiration @see https://stackoverflow.com/a/34225599 22.09.18
-                anchor.pseudoClassStateChanged(right, col == 2 || col == 5);
-                anchor.pseudoClassStateChanged(bottom, row == 2 || row == 5);
+                anchor.pseudoClassStateChanged(cssright, col == 2 || col == 5);
+                anchor.pseudoClassStateChanged(cssbottom, row == 2 || row == 5);
 
                 // 4. Add anchor to grid
                 mGrid.add(anchor, col, row);
@@ -138,10 +140,12 @@ public class ViewController {
      * @param newval latest user input
      * @param row    sudoku row index
      * @param col    sudoku column index
+     * @param csserror class to toggle when error
      */
-    void ValueChangedInCell(TextField cell, String newval, int row, int col) {
+    void ValueChangedInCell(TextField cell, String newval, int row,  int col, PseudoClass csserror) {
         LOG_DEBUG("Newval: " + newval);
-
+        cell.pseudoClassStateChanged(csserror, false);
+        
         // 1. If newval is empty we set the
         if (newval.equals("")) {
             mSudoku.setElement(row, col, Sudoku.EMPTY_CELL);
@@ -165,8 +169,7 @@ public class ViewController {
             mSudoku.addNumber(row, col, candidate);
         } catch (BadNumberException e) {
             LOG_DEBUG("mSudoku.addNumber threw BadNumberException: " + e.toString());
-            ViewController.clearCell(cell);
-            // TODO Color cell red
+            cell.pseudoClassStateChanged(csserror, true);
             return;
         } catch (IllegalArgumentException e) {
             LOG_DEBUG("mSudoku.addNumber threw IllegalArgumentException: " + e.toString());
