@@ -189,7 +189,7 @@ public class SudokuTest {
                 "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
         var sudoku = Sudoku.loadSudokuFromJson(string);
-        sudoku.lockCells();
+        sudoku.lockNumbers();
         sudoku.addNumber(0, 0, 1);
     }
 
@@ -206,8 +206,24 @@ public class SudokuTest {
                 "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
         var sudoku = Sudoku.loadSudokuFromJson(string);
-        sudoku.lockCells();
-        assertTrue(sudoku.isCellLocked(0, 0));
+        sudoku.lockNumbers();
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                if (sudoku.getElement(row, col) != Sudoku.EMPTY_CELL) {
+                    assertTrue(sudoku.isNumberLocked(row, col));
+                }
+            }
+        }
     }
 
+    @Test
+    public void emptyCellsAreNotLocked() {
+        var sudoku = new Sudoku();
+        sudoku.lockNumbers();
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                assertTrue(sudoku.isNumberLocked(row, col) == false);
+            }
+        }
+    }
 }

@@ -9,11 +9,11 @@ public interface SudokuIterator extends java.util.Iterator<Integer> {
     /**
      * Simple class for containing coordinates of a cell.
      */
-    public class Cell {
+    public class RowColumPair {
         private int mRow;
         private int mColumn;
 
-        Cell(int row, int column) {
+        RowColumPair(int row, int column) {
             mRow = row;
             mColumn = column;
         }
@@ -30,9 +30,9 @@ public interface SudokuIterator extends java.util.Iterator<Integer> {
     /**
      * Gets the row and column position of the element pointed to by the iterator.
      *
-     * @return Cell containing row and column of element pointed to by iterator.
+     * @return RowColumnPair containing row and column of element pointed to by iterator.
      */
-    Cell getPosition();
+    RowColumPair getPosition();
 
     /**
      * Gets the value of the current element that is pointed to. I.e. it gets the

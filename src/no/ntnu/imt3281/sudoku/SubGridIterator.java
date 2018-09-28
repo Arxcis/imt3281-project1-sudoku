@@ -1,32 +1,32 @@
 package no.ntnu.imt3281.sudoku;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
+
 /**
- * Iterator used to iterate through a sub grid in a collection.
+ * Iterator used to iterate through a sub grid in a sudoku board.
  */
 public class SubGridIterator implements SudokuIterator {
-    private List<List<Integer>> mCollection;
+    private final Sudoku mCollection;
     private int mSubGrid;
     private int mCellIdx;
 
     /**
      * Creates a sub grid iterator that will iterate through the selected sub grid
-     * in the supplied collection.
+     * in the supplied sudoku board.
      *
-     * @param collection The collection containing the sub grid to iterate through.
-     * @param subGrid    The sub grid that should be iterated through.
+     * @param sudoku  The sudoku board containing the sub grid to iterate through.
+     * @param subGrid The sub grid that should be iterated through.
      *
      * @exception Throws IllegalArgumentException if subGrid is outside the valid
      *                   range [0,9).
      */
-    public SubGridIterator(List<List<Integer>> collection, int subGrid) {
+    public SubGridIterator(Sudoku sudoku, int subGrid) {
         if (subGrid < 0 || subGrid >= Sudoku.GRID_COUNT)
             throw new IllegalArgumentException(
                     String.format("subGrid: %d is outside the range of the sudoku board [0,9).", subGrid));
 
-        mCollection = collection;
+        mCollection = sudoku;
         mSubGrid = subGrid;
     }
 
@@ -57,10 +57,10 @@ public class SubGridIterator implements SudokuIterator {
      * @see no.ntnu.imt3281.sudoku.SudokuIterator#getPosition()
      */
     @Override
-    public Cell getPosition() {
+    public RowColumPair getPosition() {
         int row = (mSubGrid / 3) * 3 + mCellIdx / 3;
         int col = (mSubGrid % 3) * 3 + mCellIdx % 3;
-        return new Cell(row, col);
+        return new RowColumPair(row, col);
     }
 
     /*
@@ -76,6 +76,6 @@ public class SubGridIterator implements SudokuIterator {
         int row = (mSubGrid / 3) * 3 + mCellIdx / 3;
         int col = (mSubGrid % 3) * 3 + mCellIdx % 3;
 
-        return mCollection.get(row).get(col);
+        return mCollection.getElement(row, col);
     }
 }

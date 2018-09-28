@@ -6,12 +6,54 @@ import java.util.List;
 import org.json.JSONArray;
 
 public class Sudoku {
-    private List<List<Integer>> mSudokuBoard;
+    private List<List<Cell>> mSudokuBoard;
 
     public static final int ROW_SIZE = 9;
     public static final int COL_SIZE = 9;
     public static final int GRID_COUNT = 9;
     public static final int EMPTY_CELL = -1;
+
+    /**
+     * Representation of a cell in the sudoku board, containing both a value and a
+     * bool indicating if it is locked.
+     */
+    protected class Cell {
+        private int mValue = EMPTY_CELL;
+        private boolean mIsLocked = false;
+
+        public int getValue() {
+            return mValue;
+        }
+
+        public boolean isLocked() {
+            return mIsLocked;
+        }
+
+        /**
+         * Updates the value of the cell if it is not locked
+         *
+         * @param value The desired value of the cell
+         *
+         * @exception Throws LockedCellException if you try to modify it when it is
+         *                   locked.
+         */
+        private void setValue(int value) {
+            if (mIsLocked) {
+                throw new LockedCellException();
+            }
+
+            mValue = value;
+        }
+
+        /**
+         * Locks a cell if the cell has been given a value.
+         */
+        private void lock() {
+            if (mValue != EMPTY_CELL) {
+                mIsLocked = true;
+            }
+        }
+    }
 
     /**
      * Creates a new Sudoku board constructed from the supplied json string.
@@ -48,7 +90,7 @@ public class Sudoku {
         for (int row = 0; row < ROW_SIZE; row++) {
             mSudokuBoard.add(new ArrayList<>());
             for (int col = 0; col < COL_SIZE; col++) {
-                mSudokuBoard.get(row).add(EMPTY_CELL);
+                mSudokuBoard.get(row).add(new Cell());
             }
         }
     }
@@ -62,7 +104,7 @@ public class Sudoku {
      * @return The element located at the position indicated by row and col.
      */
     protected int getElement(int row, int col) {
-        return mSudokuBoard.get(row).get(col);
+        return mSudokuBoard.get(row).get(col).getValue();
     }
 
     /**
@@ -74,7 +116,7 @@ public class Sudoku {
      * @param value The new value of the element.
      */
     protected void setElement(int row, int col, int value) {
-        mSudokuBoard.get(row).set(col, value);
+        mSudokuBoard.get(row).get(col).setValue(value);
     }
 
     /**
@@ -117,6 +159,31 @@ public class Sudoku {
     }
 
     /**
+     * Locks all the numbers that has already been given a legal value, making it
+     * impossible to change them
+     */
+    public void lockNumbers() {
+        for (int row = 0; row < ROW_SIZE; row++) {
+            for (int col = 0; col < COL_SIZE; col++) {
+                mSudokuBoard.get(row).get(col).lock();
+            }
+        }
+    }
+
+    /**
+     * Checks if a specific number in the sudoku board is locked.
+     *
+     * @param row The row containing the number to check.
+     *
+     * @param col The column containing the number to check.
+     *
+     * @return true if the number is locked, false otherwise.
+     */
+    public boolean isNumberLocked(int row, int col) {
+        return mSudokuBoard.get(row).get(col).isLocked();
+    }
+
+    /**
      * Gets an iterator to sudoku board. The iteration strategy is indicated by the
      * type parameter supplied.
      *
@@ -137,11 +204,11 @@ public class Sudoku {
      */
     protected SudokuIterator iterator(Class<?> type, int value) {
         if (type == RowIterator.class)
-            return new RowIterator(mSudokuBoard, value);
+            return new RowIterator(this, value);
         else if (type == ColumnIterator.class)
-            return new ColumnIterator(mSudokuBoard, value);
+            return new ColumnIterator(this, value);
         else if (type == SubGridIterator.class)
-            return new SubGridIterator(mSudokuBoard, value);
+            return new SubGridIterator(this, value);
 
         throw new IllegalArgumentException("Class must be Row-, Column- or SubGrid-Iterator");
     }
