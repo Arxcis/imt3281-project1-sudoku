@@ -1,6 +1,13 @@
 package no.ntnu.imt3281.sudoku;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -77,6 +84,71 @@ public class Sudoku {
                     board.addNumber(row, col, value);
                 }
             }
+        }
+
+        return board;
+    }
+
+    /**
+     * Saves the sudoku board to the file specified by the filepath.
+     *
+     * @param board    The board to save
+     * @param filepath The path to where the file should be saved.
+     */
+    public static void saveSudokuToFile(Sudoku board, final Path filepath) throws IOException {
+        try (var writer = new PrintWriter(new FileWriter(filepath.toFile()))) {
+            for (int row = 0; row < ROW_SIZE; row++) {
+                for (int col = 0; col < COL_SIZE; col++) {
+                    var locked = board.mSudokuBoard.get(row).get(col).isLocked() ? 1 : 0;
+                    writer.printf("%d %d, ", board.mSudokuBoard.get(row).get(col).getValue(), locked);
+                }
+                writer.println();
+            }
+        }
+    }
+
+    /**
+     * Loads a sudoku board from the file specified by filepath.
+     *
+     * @param filepath The filepath to the file to load the sudoku board from.
+     *
+     * @return A new sudoku board containing the configuration in the file.
+     *
+     * @exception Throws InvalidSudokuFileException in the case where the sudoku
+     *                   file is not formatted properly, or is incomplete (for
+     *                   example, missing a row or column).
+     *
+     */
+    public static Sudoku loadSudokuFromFile(final Path filepath) throws IOException {
+        var board = new Sudoku();
+        try (var reader = new BufferedReader(new FileReader(filepath.toFile()))) {
+            int row = 0;
+            String line;
+
+            while ((line = reader.readLine()) != null && row < Sudoku.ROW_SIZE) {
+                var rowList = new ArrayList<>(Arrays.asList(line.split("[,\r ]")));
+                rowList.removeIf(item -> item == null || "".equals(item));
+
+                if (rowList.size() < Sudoku.COL_SIZE * 2)
+                    throw new InvalidSudokuFileException();
+
+                for (int col = 0, i = 0; i < Sudoku.COL_SIZE * 2; col++, i += 2) {
+                    int value = Integer.parseInt(rowList.get(i));
+                    int locked = Integer.parseInt(rowList.get(i + 1));
+                    if (value != -1) {
+                        board.addNumber(row, col, value);
+                    }
+                    if (locked == 1) {
+                        board.mSudokuBoard.get(row).get(col).lock();
+                    }
+                }
+
+                row++;
+            }
+
+            if (row < Sudoku.ROW_SIZE)
+                throw new InvalidSudokuFileException();
+
         }
 
         return board;
