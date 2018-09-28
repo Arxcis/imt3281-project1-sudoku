@@ -226,4 +226,21 @@ public class SudokuTest {
             }
         }
     }
+
+    @Test
+    public void canStillChangeUnLockedCells() {
+        var string = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" +
+                "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n" +
+                "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" +
+                "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n" +
+                "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" +
+                "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n" +
+                "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" +
+                "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
+                "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var sudoku = Sudoku.loadSudokuFromJson(string);
+        sudoku.lockNumbers();
+        sudoku.addNumber(0, 2, 4);
+    }
 }
