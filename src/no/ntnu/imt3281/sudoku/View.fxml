@@ -13,10 +13,10 @@
    <children>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button fx:id="mBtnNewGame" mnemonicParsing="false" onAction="#OnClickNewGame" text="New Game" />
-            <Button fx:id="mBtnSave" mnemonicParsing="false" onAction="#OnClickSave" text="Save" />
-            <Button fx:id="mBtnLoad" mnemonicParsing="false" onAction="#OnClickLoad" text="Load" />
-            <Button fx:id="mBtnExit" mnemonicParsing="false" onAction="#OnClickExit" text="Exit" />
+          <Button fx:id="mBtnNewGame" mnemonicParsing="false" onAction="#OnClickNewGame" text="%new.game" />
+            <Button fx:id="mBtnSave" mnemonicParsing="false" onAction="#OnClickSave" text="%save" />
+            <Button fx:id="mBtnLoad" mnemonicParsing="false" onAction="#OnClickLoad" text="%load" />
+            <Button fx:id="mBtnExit" mnemonicParsing="false" onAction="#OnClickExit" text="%exit" />
         </items>
       </ToolBar>
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="1000.0" prefWidth="200.0" />

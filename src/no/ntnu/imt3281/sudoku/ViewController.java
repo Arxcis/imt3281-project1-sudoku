@@ -23,7 +23,7 @@ public class ViewController {
      */
     public static Scene loadScene() throws IOException {
         final URL fxml = ViewController.class.getResource("View.fxml");
-        final Parent root = FXMLLoader.load(fxml);
+        final Parent root = FXMLLoader.load(fxml, Language.getBundle());
 
         mScene = new Scene(root);
         mScene.getStylesheets().add(ViewController.class.getResource("View.css").toString());

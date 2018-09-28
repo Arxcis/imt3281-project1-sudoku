@@ -25,7 +25,8 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-
+        
+        Language.init();
         Scene scene = null;
         scene = ViewController.loadScene();
         primaryStage.setTitle("Sudoku");
