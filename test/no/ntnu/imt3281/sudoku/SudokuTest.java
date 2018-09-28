@@ -6,7 +6,9 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 public class SudokuTest {
-
+    ///////////////////////////////////////////////////////
+    /// Constructor tests
+    ///////////////////////////////////////////////////////
     @Test
     public void testEmptyConstructor() {
         Sudoku sudoku = new Sudoku();
@@ -90,6 +92,9 @@ public class SudokuTest {
         }
     }
 
+    ///////////////////////////////////////////////////////
+    /// AddNumber tests
+    ///////////////////////////////////////////////////////
     @Test
     public void addNumberAllow0BasedRow() {
         var sudoku = new Sudoku();
@@ -166,6 +171,43 @@ public class SudokuTest {
     public void addNumberThrowsIllegalArgumentExceptionOnInvalidHighValue() {
         var sudoku = new Sudoku();
         sudoku.addNumber(0, 0, 10);
+    }
+
+    ///////////////////////////////////////////////////////
+    /// Lock Number tests
+    ///////////////////////////////////////////////////////
+    @Test(expected = LockedCellException.class)
+    public void lockedNumbersThrowOnChange() {
+        var string = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" +
+                "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n" +
+                "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" +
+                "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n" +
+                "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" +
+                "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n" +
+                "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" +
+                "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
+                "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var sudoku = Sudoku.loadSudokuFromJson(string);
+        sudoku.lockCells();
+        sudoku.addNumber(0, 0, 1);
+    }
+
+    @Test
+    public void lockedNumbersAreCorrectlyIdentified() {
+        var string = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" +
+                "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n" +
+                "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" +
+                "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n" +
+                "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" +
+                "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n" +
+                "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" +
+                "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
+                "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var sudoku = Sudoku.loadSudokuFromJson(string);
+        sudoku.lockCells();
+        assertTrue(sudoku.isCellLocked(0, 0));
     }
 
 }
