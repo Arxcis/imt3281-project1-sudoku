@@ -13,6 +13,11 @@ public interface SudokuIterator extends java.util.Iterator<Integer> {
         private int mRow;
         private int mColumn;
 
+        /**
+         * Creates a RowColumPair with the supplied row and column.
+         * @param row The row containing the sudoku element.
+         * @param column The column containing the sudoku element.
+         */
         RowColumPair(int row, int column) {
             mRow = row;
             mColumn = column;
