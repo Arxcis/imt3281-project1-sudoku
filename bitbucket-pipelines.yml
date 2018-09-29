@@ -9,11 +9,13 @@ pipelines:
   default:
     - step:
         script: # Modify the commands below to build your repository.
-          - apt-get update 
+          - apt-get update
           - apt-get install -y wget
           - pushd /opt/ >/dev/null
           - wget http://www-eu.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
           - tar -xf apache-maven-3.5.4-bin.tar.gz
           - mv apache-maven-3.5.4/ apache-maven/
           - popd >/dev/null
+          - mv mvn_settings.xml /opt/apache-maven/conf/settings.xml
           - /opt/apache-maven/bin/mvn -B verify # -B batch mode makes Maven less verbose
+          - /opt/apache-maven/bin/mvn sonar:sonar
