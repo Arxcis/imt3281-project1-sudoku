@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -121,6 +122,7 @@ public class Sudoku {
      */
     public static Sudoku loadSudokuFromFile(final Path filepath) throws IOException {
         var board = new Sudoku();
+
         try (var reader = new BufferedReader(new FileReader(filepath.toFile()))) {
             int row = 0;
             String line;
@@ -148,8 +150,8 @@ public class Sudoku {
 
             if (row < Sudoku.ROW_SIZE)
                 throw new InvalidSudokuFileException();
-
         }
+
 
         return board;
     }
@@ -283,5 +285,32 @@ public class Sudoku {
             return new SubGridIterator(this, value);
 
         throw new IllegalArgumentException("Class must be Row-, Column- or SubGrid-Iterator");
+    }
+
+    /**
+     * Changes all existing values into new values, while still maintaining the
+     * layout of the numbers on the board.
+     *
+     * The number of instances of a value and their placements are kept the same, but
+     * the actual "value" is changed. For example: If there were three 4's on the
+     * board before randomization, and all 4's are changed to 2's, then there will
+     * still be three 2's on the table, in the same positions that the 4's were in
+     * the original table.
+     *
+     * Also, all numbers are changed into a different one, to ensure that the
+     * legality of the board is intact.
+     */
+    protected void randomizeAllExistingElements() {
+        var values = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
+        Collections.shuffle(values);
+
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                var value = getElement(row, col);
+                if (value != Sudoku.EMPTY_CELL) {
+                    setElement(row, col, values.get(value - 1));
+                }
+            }
+        }
     }
 }
