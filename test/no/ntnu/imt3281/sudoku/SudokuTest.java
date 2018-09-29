@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -372,5 +373,61 @@ public class SudokuTest {
         }
 
         Sudoku.loadSudokuFromFile(file.toPath());
+    }
+
+    ///////////////////////////////////////////////////////
+    /// Change all elements tests
+    ///////////////////////////////////////////////////////
+    /**
+     * Logic of the test is that if all if we change all the numbers of the same
+     * value to a different value between the original and the randomized board,
+     * then we should be able to identify that all the values that have changed by
+     * finding the difference between the original and new values, and checking if
+     * that difference is always the same each time we encounter a number within the
+     * original table.
+     */
+    @Test
+    public void randomizesAllContainingAvalue() {
+        var string = "["+
+                     "[ 5,  3, -1, -1,  7, -1, -1, -1, -1], \n" +
+                     "[ 6, -1, -1,  1,  9,  5, -1, -1, -1], \n" +
+                     "[-1,  9,  8, -1, -1, -1, -1,  6, -1], \n" +
+                     "[ 8, -1, -1, -1,  6, -1, -1, -1,  3], \n" +
+                     "[ 4, -1, -1,  8, -1,  3, -1, -1,  1], \n" +
+                     "[ 7, -1, -1, -1,  2, -1, -1, -1,  6], \n" +
+                     "[-1,  6, -1, -1, -1, -1,  2,  8, -1], \n" +
+                     "[-1, -1, -1,  4,  1,  9, -1, -1,  5], \n" +
+                     "[-1, -1, -1, -1,  8, -1, -1,  7,  9]" +
+                     "]";
+
+        var originalBoard = Sudoku.loadSudokuFromJson(string);
+        var newBoard = Sudoku.loadSudokuFromJson(string);
+        newBoard.randomizeAllExistingElements();
+
+        // Using -2 to indicate value not being set, as we can end up with 0 as legal
+        // value in the check.
+        final int UNSET_VALUE = -2;
+        var results = new ArrayList<>(java.util.Collections.nCopies(9, UNSET_VALUE));
+
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                var origValue = originalBoard.getElement(row, col);
+                var newVal = newBoard.getElement(row, col);
+
+                // If we encounter an EMPTY_CELL we don't need to do any calculations we only
+                // need to check that we have an EMPTY_CELL on the other board.
+                if (origValue == Sudoku.EMPTY_CELL) {
+                    assertTrue(newVal == Sudoku.EMPTY_CELL);
+                    continue;
+                }
+
+                // We are encountering this value in the original table for the first time.
+                if (results.get(origValue - 1) == UNSET_VALUE) {
+                    results.set(origValue - 1, origValue - newVal);
+                }
+
+                assertTrue(results.get(origValue - 1) == origValue - newVal);
+            }
+        }
     }
 }
