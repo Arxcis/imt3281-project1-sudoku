@@ -1,10 +1,12 @@
 package no.ntnu.imt3281.sudoku;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +15,10 @@ import java.util.List;
 
 import org.json.JSONArray;
 
+/**
+ * Sudoku class is a representation of a Sudoku board with the standard 9*9 grid
+ * layout.
+ */
 public class Sudoku {
     private List<List<Cell>> mSudokuBoard;
 
@@ -25,7 +31,7 @@ public class Sudoku {
      * Representation of a cell in the sudoku board, containing both a value and a
      * bool indicating if it is locked.
      */
-    protected class Cell {
+    protected static class Cell {
         private int mValue = EMPTY_CELL;
         private boolean mIsLocked = false;
 
@@ -42,8 +48,10 @@ public class Sudoku {
          *
          * @param value The desired value of the cell
          *
-         * @exception Throws LockedCellException if you try to modify it when it is
-         *                   locked.
+         * @exception LockedCellException Throws LockedCellException if you try to
+         *                                modify it when it is locked.
+         *
+         * @see no.ntnu.imt3281.sudoku.LockedCellException
          */
         private void setValue(int value) {
             if (mIsLocked) {
@@ -59,6 +67,19 @@ public class Sudoku {
         private void lock() {
             if (mValue != EMPTY_CELL) {
                 mIsLocked = true;
+            }
+        }
+    }
+
+    /**
+     * Creates a new entirely empty Sudoku board.
+     */
+    public Sudoku() {
+        mSudokuBoard = new ArrayList<>();
+        for (int row = 0; row < ROW_SIZE; row++) {
+            mSudokuBoard.add(new ArrayList<>());
+            for (int col = 0; col < COL_SIZE; col++) {
+                mSudokuBoard.get(row).add(new Cell());
             }
         }
     }
@@ -95,15 +116,18 @@ public class Sudoku {
      *
      * @param board    The board to save
      * @param filepath The path to where the file should be saved.
+     *
+     * @exception IOException Throws IOException on IO errors.
      */
     public static void saveSudokuToFile(Sudoku board, final Path filepath) throws IOException {
-        try (var writer = new PrintWriter(new FileWriter(filepath.toFile()))) {
+        try (var writer = new OutputStreamWriter(new FileOutputStream(filepath.toFile()), StandardCharsets.UTF_8)) {
             for (int row = 0; row < ROW_SIZE; row++) {
                 for (int col = 0; col < COL_SIZE; col++) {
+                    var value = board.mSudokuBoard.get(row).get(col).getValue();
                     var locked = board.mSudokuBoard.get(row).get(col).isLocked() ? 1 : 0;
-                    writer.printf("%d %d, ", board.mSudokuBoard.get(row).get(col).getValue(), locked);
+                    writer.write(String.format("%d %d, ", value, locked));
                 }
-                writer.println();
+                writer.write("\n");
             }
         }
     }
@@ -115,15 +139,17 @@ public class Sudoku {
      *
      * @return A new sudoku board containing the configuration in the file.
      *
-     * @exception Throws InvalidSudokuFileException in the case where the sudoku
-     *                   file is not formatted properly, or is incomplete (for
-     *                   example, missing a row or column).
+     * @exception InvalidSudokuFileException Throws InvalidSudokuFileException in
+     *                                       the case where the sudoku file is not
+     *                                       formatted properly, or is incomplete
+     *                                       (for example, missing a row or column).
      *
+     * @exception IOException                Throws IOException on IO errors.
      */
     public static Sudoku loadSudokuFromFile(final Path filepath) throws IOException {
         var board = new Sudoku();
 
-        try (var reader = new BufferedReader(new FileReader(filepath.toFile()))) {
+        try (var reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath.toFile()), "UTF-8"))) {
             int row = 0;
             String line;
 
@@ -131,15 +157,20 @@ public class Sudoku {
                 var rowList = new ArrayList<>(Arrays.asList(line.split("[,\r ]")));
                 rowList.removeIf(item -> item == null || "".equals(item));
 
-                if (rowList.size() < Sudoku.COL_SIZE * 2)
+                if (rowList.size() < Sudoku.COL_SIZE * 2) {
                     throw new InvalidSudokuFileException();
+                }
 
                 for (int col = 0, i = 0; i < Sudoku.COL_SIZE * 2; col++, i += 2) {
                     int value = Integer.parseInt(rowList.get(i));
                     int locked = Integer.parseInt(rowList.get(i + 1));
+
                     if (value != -1) {
                         board.addNumber(row, col, value);
                     }
+
+                    // This is an bug waiting to happen, because we don't check here that the value
+                    // is != -1, which allows people to lock empty cells.
                     if (locked == 1) {
                         board.mSudokuBoard.get(row).get(col).lock();
                     }
@@ -148,25 +179,12 @@ public class Sudoku {
                 row++;
             }
 
-            if (row < Sudoku.ROW_SIZE)
+            if (row < Sudoku.ROW_SIZE) {
                 throw new InvalidSudokuFileException();
-        }
-
-
-        return board;
-    }
-
-    /**
-     * Creates a new entirely empty Sudoku board.
-     */
-    public Sudoku() {
-        mSudokuBoard = new ArrayList<>();
-        for (int row = 0; row < ROW_SIZE; row++) {
-            mSudokuBoard.add(new ArrayList<>());
-            for (int col = 0; col < COL_SIZE; col++) {
-                mSudokuBoard.get(row).add(new Cell());
             }
         }
+
+        return board;
     }
 
     /**
@@ -202,10 +220,12 @@ public class Sudoku {
      * @param col   The column containing the element.
      * @param value The value we're trying to set the element to be.
      *
-     * @exception Throws IllegalArgumentException if value is not in range [1-9]
+     * @exception IllegalArgumentException Throws IllegalArgumentException if value
+     *                                     is not in range [1-9]
      *
-     * @exception Throws BadNumberException if value already exists within the row,
-     *                   column, or sub grid it is entered into.
+     * @exception BadNumberException       Throws BadNumberException if value
+     *                                     already exists within the row, column, or
+     *                                     sub grid it is entered into.
      */
     public void addNumber(int row, int col, int value) {
 
@@ -271,18 +291,21 @@ public class Sudoku {
      *
      * @return An iterator using the strategy indicated by the type parameter.
      *
-     * @exception Throws IllegalArgumentException if an unsupported type is
-     *                   supplied. Type must be: RowIterator, ColumnIterator or
-     *                   SubGridIterator. Throws IllegalArgumentException if an
-     *                   unsupported type is supplied.
+     * @exception IllegalArgumentException Throws IllegalArgumentException if an
+     *                                     unsupported type is supplied. Type must
+     *                                     be: RowIterator, ColumnIterator or
+     *                                     SubGridIterator. Throws
+     *                                     IllegalArgumentException if an
+     *                                     unsupported type is supplied.
      */
     protected SudokuIterator iterator(Class<?> type, int value) {
-        if (type == RowIterator.class)
+        if (type == RowIterator.class) {
             return new RowIterator(this, value);
-        else if (type == ColumnIterator.class)
+        } else if (type == ColumnIterator.class) {
             return new ColumnIterator(this, value);
-        else if (type == SubGridIterator.class)
+        } else if (type == SubGridIterator.class) {
             return new SubGridIterator(this, value);
+        }
 
         throw new IllegalArgumentException("Class must be Row-, Column- or SubGrid-Iterator");
     }
@@ -291,11 +314,11 @@ public class Sudoku {
      * Changes all existing values into new values, while still maintaining the
      * layout of the numbers on the board.
      *
-     * The number of instances of a value and their placements are kept the same, but
-     * the actual "value" is changed. For example: If there were three 4's on the
-     * board before randomization, and all 4's are changed to 2's, then there will
-     * still be three 2's on the table, in the same positions that the 4's were in
-     * the original table.
+     * The number of instances of a value and their placements are kept the same,
+     * but the actual "value" is changed. For example: If there were three 4's on
+     * the board before randomization, and all 4's are changed to 2's, then there
+     * will still be three 2's on the table, in the same positions that the 4's were
+     * in the original table.
      *
      * Also, all numbers are changed into a different one, to ensure that the
      * legality of the board is intact.
