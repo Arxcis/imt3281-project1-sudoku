@@ -35,6 +35,6 @@
     -fx-font-size: 23px;
 }
 
-.cell:error {
+.cell:bad {
     -fx-text-fill: #f44242;
 }
