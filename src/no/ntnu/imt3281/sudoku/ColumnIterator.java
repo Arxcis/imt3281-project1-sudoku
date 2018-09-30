@@ -1,32 +1,31 @@
 package no.ntnu.imt3281.sudoku;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Iterator used to iterate through a column in a collection.
+ * Iterator used to iterate through a column in a sudoku board.
  */
 public class ColumnIterator implements SudokuIterator {
-    private List<List<Integer>> mCollection;
+    private final Sudoku mCollection;
     private int mRow;
     private int mColumn;
 
     /**
      * Creates a column iterator that will iterate through the selected column in
-     * the supplied collection.
+     * the supplied sudoku board.
      *
-     * @param collection The collection containing the column to iterate through.
-     * @param column     The column that should be iterated through.
+     * @param sudoku The sudoku board containing the column to iterate through.
+     * @param column The column that should be iterated through.
      *
      * @exception Throws IllegalArgumentException if column is outside the valid
      *                   range [0,9).
      */
-    public ColumnIterator(List<List<Integer>> collection, int column) {
+    public ColumnIterator(Sudoku sudoku, int column) {
         if (column < 0 || column >= Sudoku.COL_SIZE)
             throw new IllegalArgumentException(
                     String.format("column: %d is outside the range of the sudoku board [0,9).", column));
 
-        mCollection = collection;
+        mCollection = sudoku;
         mColumn = column;
     }
 
@@ -56,8 +55,8 @@ public class ColumnIterator implements SudokuIterator {
      * @see no.ntnu.imt3281.sudoku.SudokuIterator#getPosition()
      */
     @Override
-    public Cell getPosition() {
-        return new Cell(mRow, mColumn);
+    public RowColumPair getPosition() {
+        return new RowColumPair(mRow, mColumn);
     }
 
     /*
@@ -68,6 +67,6 @@ public class ColumnIterator implements SudokuIterator {
         if (!this.hasNext())
             throw new NoSuchElementException();
 
-        return mCollection.get(mRow).get(mColumn);
+        return mCollection.getElement(mRow, mColumn);
     }
 }

@@ -1,32 +1,31 @@
 package no.ntnu.imt3281.sudoku;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Iterator used to iterate through a row in a collection.
+ * Iterator used to iterate through a row in a sudoku board.
  */
 public class RowIterator implements SudokuIterator {
-    private List<List<Integer>> mCollection;
+    private final Sudoku mCollection;
     private int mRow;
     private int mColumn;
 
     /**
      * Creates a row iterator that will iterate through the selected row in the
-     * supplied collection.
+     * supplied sudoku board.
      *
-     * @param collection The collection containing the row to iterate through.
-     * @param row        The row that should be iterated through.
+     * @param sudoku The sudoku board containing the row to iterate through.
+     * @param row    The row that should be iterated through.
      *
      * @exception Throws IllegalArgumentException if row is outside the valid range
      *                   [0,9).
      */
-    public RowIterator(List<List<Integer>> collection, int row) {
+    public RowIterator(Sudoku sudoku, int row) {
         if (row < 0 || row >= Sudoku.ROW_SIZE)
             throw new IllegalArgumentException(
                     String.format("row: %d is outside the range of the sudoku board [0,9).", row));
 
-        mCollection = collection;
+        mCollection = sudoku;
         mRow = row;
     }
 
@@ -56,8 +55,8 @@ public class RowIterator implements SudokuIterator {
      * @see no.ntnu.imt3281.sudoku.SudokuIterator#getPosition()
      */
     @Override
-    public Cell getPosition() {
-        return new Cell(mRow, mColumn);
+    public RowColumPair getPosition() {
+        return new RowColumPair(mRow, mColumn);
     }
 
     /*
@@ -68,6 +67,6 @@ public class RowIterator implements SudokuIterator {
         if (!this.hasNext())
             throw new NoSuchElementException();
 
-        return mCollection.get(mRow).get(mColumn);
+        return mCollection.getElement(mRow, mColumn);
     }
 }
