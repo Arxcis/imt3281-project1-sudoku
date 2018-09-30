@@ -375,6 +375,67 @@ public class SudokuTest {
         Sudoku.loadSudokuFromFile(file.toPath());
     }
 
+    @Test(expected = InvalidSudokuFileException.class)
+    public void loadsFileThrowsOnTooManyColumns() throws IOException {
+        var fileContents = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, -1 0, -1 0, \n"
+                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, -1 0, \n"
+                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, \n"
+                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, -1 0, \n"
+                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, -1 0, \n"
+                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
+                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, -1 0, \n"
+                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, -1 0, \n"
+                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, -1 0, ";
+
+        var file = folder.newFile();
+        try (final var writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(fileContents);
+        }
+
+        Sudoku.loadSudokuFromFile(file.toPath());
+    }
+
+    @Test(expected = InvalidSudokuFileException.class)
+    public void loadsFileThrowsOnTooManyRows() throws IOException {
+        var fileContents = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, -1 0, \n"
+                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, \n"
+                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
+                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, \n"
+                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, \n"
+                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, \n"
+                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, \n"
+                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, \n"
+                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, \n"
+                + "-1 0, -1 0, -1 0, -1 0, -1 0, -1 0, -1 0, -1 0, -1 0,";
+
+        var file = folder.newFile();
+        try (final var writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(fileContents);
+        }
+
+        Sudoku.loadSudokuFromFile(file.toPath());
+    }
+
+    @Test(expected = InvalidSudokuFileException.class)
+    public void loadsFileThrowsOnLockedEmptyCells() throws IOException {
+        var fileContents = "5 1, 3 1, 4 0, -1 1, 7 1, -1 0, -1 0, -1 0, -1 0, \n"
+                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, \n"
+                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
+                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, \n"
+                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, \n"
+                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, \n"
+                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, \n"
+                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, \n"
+                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, ";
+
+        var file = folder.newFile();
+        try (final var writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(fileContents);
+        }
+
+        Sudoku.loadSudokuFromFile(file.toPath());
+    }
+
     ///////////////////////////////////////////////////////
     /// Change all elements tests
     ///////////////////////////////////////////////////////

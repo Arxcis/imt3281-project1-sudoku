@@ -17,19 +17,20 @@ public class ColumnIterator implements SudokuIterator {
      * @param sudoku The sudoku board containing the column to iterate through.
      * @param column The column that should be iterated through.
      *
-     * @exception Throws IllegalArgumentException if column is outside the valid
-     *                   range [0,9).
+     * @exception IllegalArgumentException Throws IllegalArgumentException if column
+     *                                     is outside the valid range [0,9).
      */
     public ColumnIterator(Sudoku sudoku, int column) {
-        if (column < 0 || column >= Sudoku.COL_SIZE)
+        if (column < 0 || column >= Sudoku.COL_SIZE) {
             throw new IllegalArgumentException(
                     String.format("column: %d is outside the range of the sudoku board [0,9).", column));
+        }
 
         mCollection = sudoku;
         mColumn = column;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see java.util.Iterator#hasNext()
@@ -39,7 +40,7 @@ public class ColumnIterator implements SudokuIterator {
         return mRow < Sudoku.ROW_SIZE;
     }
 
-    /*
+    /**
      * (non-Javadoc)
      *
      * @see java.util.Iterator#next()
@@ -51,7 +52,7 @@ public class ColumnIterator implements SudokuIterator {
         return val;
     }
 
-    /*
+    /**
      * @see no.ntnu.imt3281.sudoku.SudokuIterator#getPosition()
      */
     @Override
@@ -59,13 +60,14 @@ public class ColumnIterator implements SudokuIterator {
         return new RowColumPair(mRow, mColumn);
     }
 
-    /*
+    /**
      * @see no.ntnu.imt3281.sudoku.SudokuIterator#peek()
      */
     @Override
     public Integer peek() {
-        if (!this.hasNext())
+        if (!this.hasNext()) {
             throw new NoSuchElementException();
+        }
 
         return mCollection.getElement(mRow, mColumn);
     }
