@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 
@@ -31,7 +33,7 @@ public class Sudoku {
      * Representation of a cell in the sudoku board, containing both a value and a
      * bool indicating if it is locked.
      */
-    protected static class Cell {
+    private static class Cell {
         private int mValue = EMPTY_CELL;
         private boolean mIsLocked = false;
 
@@ -149,38 +151,48 @@ public class Sudoku {
     public static Sudoku loadSudokuFromFile(final Path filepath) throws IOException {
         var board = new Sudoku();
 
-        try (var reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath.toFile()), "UTF-8"))) {
-            int row = 0;
-            String line;
+        try (var reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath.toFile()),
+                                                                                       StandardCharsets.UTF_8))) {
 
-            while ((line = reader.readLine()) != null && row < Sudoku.ROW_SIZE) {
-                var rowList = new ArrayList<>(Arrays.asList(line.split("[,\r ]")));
-                rowList.removeIf(item -> item == null || "".equals(item));
+            // Don't really like having to traverse this entire thing twice by putting it
+            // into a list,
+            // but I can't come up with a way to traverse it only once, without all the
+            // messy logic that the previous implementation suffered from.
+            var lines = reader.lines()
+                              .filter(item -> Objects.nonNull(item) && !"".equals(item))
+                              .collect(Collectors.toList());
 
-                if (rowList.size() < Sudoku.COL_SIZE * 2) {
+            if (lines.size() != Sudoku.ROW_SIZE) {
+                throw new InvalidSudokuFileException();
+            }
+
+            for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+                var columns = Arrays.stream(lines.get(row).split("[, ]"))
+                                    .filter(item -> Objects.nonNull(item) && !"".equals(item))
+                                    .collect(Collectors.toList());
+
+                // Each column in a row is supposed to contain 2 pieces of information.
+                // The value and whether or not it is locked.
+                if (columns.size() != Sudoku.COL_SIZE * 2) {
                     throw new InvalidSudokuFileException();
                 }
 
-                for (int col = 0, i = 0; i < Sudoku.COL_SIZE * 2; col++, i += 2) {
-                    int value = Integer.parseInt(rowList.get(i));
-                    int locked = Integer.parseInt(rowList.get(i + 1));
+                for (int col = 0, fieldCount = 0; col < Sudoku.COL_SIZE; col++, fieldCount += 2) {
+                    int value = Integer.parseInt(columns.get(fieldCount));
+                    int locked = Integer.parseInt(columns.get(fieldCount + 1));
 
-                    if (value != -1) {
-                        board.addNumber(row, col, value);
+                    if (value == Sudoku.EMPTY_CELL) {
+                        if (locked == 1) {
+                            throw new InvalidSudokuFileException();
+                        }
+                        continue;
                     }
 
-                    // This is an bug waiting to happen, because we don't check here that the value
-                    // is != -1, which allows people to lock empty cells.
+                    board.addNumber(row, col, value);
                     if (locked == 1) {
                         board.mSudokuBoard.get(row).get(col).lock();
                     }
                 }
-
-                row++;
-            }
-
-            if (row < Sudoku.ROW_SIZE) {
-                throw new InvalidSudokuFileException();
             }
         }
 
