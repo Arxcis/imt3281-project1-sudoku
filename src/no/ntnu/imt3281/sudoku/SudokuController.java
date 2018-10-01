@@ -2,6 +2,8 @@ package no.ntnu.imt3281.sudoku;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.application.Platform;
 import javafx.css.PseudoClass;
@@ -16,7 +18,21 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 public class SudokuController {
-    
+    /**
+     * Load and build a scene from an FXML document
+     *
+     * @return fxml scene
+     */
+    public static Scene loadScene() throws IOException {
+        final URL fxml = SudokuController.class.getResource("View.fxml");
+        final Parent root = FXMLLoader.load(fxml, Language.getBundle());
+
+        mScene = new Scene(root);
+        mScene.getStylesheets().add(SudokuController.class.getResource("View.css").toString());
+
+        return mScene;
+    }
+
     /**
      * fxml id
      */
@@ -51,52 +67,41 @@ public class SudokuController {
      * sudoku game state object
      */
     Sudoku mSudoku;
-    
+
     /**
      * grid of fxml textFields
      */
     ArrayList<ArrayList<TextField>> mTextGrid;
-    
+
     /**
      * grid of bad numbers
      */
-    ArrayList<ArrayList<int>> mBadGrid;
+    ArrayList<ArrayList<Integer>> mBadGrid;
+
+    /**
+     * is rendering
+     */
+    AtomicBoolean mIsRendering = new AtomicBoolean(false);
 
     /**
      * fxml scene
-     */    
+     */
     static Scene mScene;
 
     /**
-      * Pseudo class inspiration @see https://stackoverflow.com/a/34225599 22.09.18
-      */
-    static PseudoClass cssRight = PseudoClass.getPseudoClass("right");
-    
-    /**
-      * Pseudo class inspiration @see https://stackoverflow.com/a/34225599 22.09.18
-      */
-    static PseudoClass cssBottom = PseudoClass.getPseudoClass("bottom");
-    
-    /**
-      * Pseudo class inspiration @see https://stackoverflow.com/a/34225599 22.09.18
-      */
-    static PseudoClass cssBad = PseudoClass.getPseudoClass("bad");
-
-    /**
-     * Load and build a scene from an FXML document
-     *
-     * @return fxml scene
+     * right lines in 3x3 boxes
      */
-    public static Scene loadScene() throws IOException {
-        final URL fxml = SudokuController.class.getResource("View.fxml");
-        final Parent root = FXMLLoader.load(fxml, Language.getBundle());
+    static PseudoClass mCssRight = PseudoClass.getPseudoClass("right");
 
-        mScene = new Scene(root);
-        mScene.getStylesheets().add(SudokuController.class.getResource("View.css").toString());
+    /**
+     * bottom lines 3x3 boxes
+     */
+    static PseudoClass mCssBottom = PseudoClass.getPseudoClass("bottom");
 
-        return mScene;
-    }
-
+    /**
+     * bad numbers
+     */
+    static PseudoClass mCssBad = PseudoClass.getPseudoClass("bad");
 
     /**
      * fxml event
@@ -149,31 +154,39 @@ public class SudokuController {
         mSudoku = new Sudoku();
         mBadGrid = SudokuController.makeBadGrid();
         mTextGrid = SudokuController.makeTextGrid();
+        this.addTextGridOnChangedListeners();
         SudokuController.bindTextGridToParent(mGridParent, mTextGrid);
+    }
 
-        // Add eventlisteners to each textCell ()
+    /**
+     * Add event listeners to each fxml text field
+     */
+    void addTextGridOnChangedListeners() {
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
             for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
 
                 TextField textCell = mTextGrid.get(row).get(col);
                 final int finalrow = row;
                 final int finalcol = col;
-                textCell.textProperty().addListener(
-                    (__, ___, newval) -> 
-                        this.valueChangedInCell(newval, finalrow, finalcol));
+                textCell.textProperty()
+                        .addListener((__, ___, newval) -> this.valueChangedInCell(newval, finalrow, finalcol));
             }
         }
     }
 
-   /**
+    /**
      * Parse, Validate input. Clear cell if not valid
-     *
-     * @param cell   fxml target
+     * 
      * @param newval latest user input
      * @param row    sudoku row index
      * @param col    sudoku column index
      */
-    void valueChangedInCell(String newval, int row,  int col) {
+    void valueChangedInCell(String newval, int row, int col) {
+
+        // Turn off event-handling while rendering to prevent infinite loop
+        if (mIsRendering.get()) {
+            return;
+        }
 
         // 1. If newval is empty, we clear cell..
         if (!newval.equals("")) {
@@ -185,59 +198,62 @@ public class SudokuController {
                 try {
                     mSudoku.addNumber(row, col, candidate);
                     // ...new cell added to the sudoku board
-                
+
                 } catch (BadNumberException e) {
-                    mBadGrid.get(row).get(col) = candidate;
+                    mBadGrid.get(row).set(col, candidate);
                     // ...kept the cell in the bad numbers grid.
                 } catch (IllegalArgumentException e) {
-                    // ...do nothing. The cell will be cleared        
+                    // ...do nothing. The cell will be cleared
                 }
             } catch (NumberFormatException e) {
                 // ...do nothing. The cell will be cleared
             }
         } else {
             mSudoku.setElement(row, col, Sudoku.EMPTY_CELL);
+            mBadGrid.get(row).set(col, Sudoku.EMPTY_CELL);
             // ...cell was cleared by user
         }
 
         SudokuController.retryBadNumbers(mSudoku, mBadGrid);
 
-        // Run later because fxml complains if we modifiy textField in its onChanged handler
-        Platform.runLater(() -> {
-            SudokuController.renderValidNumbers(mTextGrid, mSudoku);
-            SudokuController.renderBadNumbers(mTextGrid, mBadGrid);
-        });
+        mIsRendering.set(true);
+        SudokuController.renderValidNumbers(mTextGrid, mSudoku);
+        SudokuController.renderBadNumbers(mTextGrid, mBadGrid);
+        mIsRendering.set(false);
     }
 
     /**
      * @return 2d array of fxml textField
      */
     static ArrayList<ArrayList<TextField>> makeTextGrid() {
-        var textGrid = new ArrayList<>();
-        
+        var textGrid = new ArrayList<ArrayList<TextField>>();
+
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
-            textGrid.add(new ArrayList<>());
-        
+            var textRow = new ArrayList<TextField>();
+
             for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
                 TextField textCell = new TextField();
                 textCell.getStyleClass().add("cell");
-                textGrid.get(row).add(textCell);
+                textRow.add(textCell);
             }
+            textGrid.add(textRow);
         }
         return textGrid;
     }
 
     /**
-      * @return empty grid of bad numbers
-      */
-    static ArrayList<ArrayList<int>> makeBadGrid() {
+     * @return empty grid of bad numbers
+     */
+    static ArrayList<ArrayList<Integer>> makeBadGrid() {
+        var badGrid = new ArrayList<ArrayList<Integer>>();
 
-        var badGrid = new ArrayList<>();
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
-            badGrid.add(new ArrayList<>());
+            var badRow = new ArrayList<Integer>();
+
             for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
-                badGrid.add(Sudoku.EMPTY_CELL);
+                badRow.add(Integer.valueOf(Sudoku.EMPTY_CELL));
             }
+            badGrid.add(badRow);
         }
         return badGrid;
     }
@@ -259,14 +275,14 @@ public class SudokuController {
                 AnchorPane.setRightAnchor(textCell, 0.0);
                 AnchorPane.setBottomAnchor(textCell, 0.0);
                 anchor.getChildren().add(textCell);
-                
+
                 anchor.setMinSize(50, 50);
                 anchor.setPrefSize(50, 50);
                 anchor.setMaxSize(200, 200);
 
                 anchor.getStyleClass().add("anchor");
-                anchor.pseudoClassStateChanged(SudokuController.cssRight, col == 2 || col == 5);
-                anchor.pseudoClassStateChanged(SudokuController.cssBottom, row == 2 || row == 5);
+                anchor.pseudoClassStateChanged(SudokuController.mCssRight, col == 2 || col == 5);
+                anchor.pseudoClassStateChanged(SudokuController.mCssBottom, row == 2 || row == 5);
 
                 parent.add(anchor, col, row);
             }
@@ -277,23 +293,23 @@ public class SudokuController {
      * @param sudoku
      * @param badGrid
      */
-    static void retryBadNumbers(Sudoku sudoku, ArrayList<ArrayList<int>> badGrid) {
-        for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
-            for (int col = 0; col < Sudoku.COL_SIZE; ++col) { 
+    static void retryBadNumbers(Sudoku sudoku, ArrayList<ArrayList<Integer>> badGrid) {
 
-                int badNumber = badGrid.get(row).get(col);                
+        for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
+            for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
+
+                int badNumber = badGrid.get(row).get(col);
                 if (badNumber == Sudoku.EMPTY_CELL) {
                     continue;
                 }
-
                 try {
                     sudoku.addNumber(row, col, badNumber);
-                    badGrid.get(row).get(col) = Sudoku.EMPTY_CELL;
+                    badGrid.get(row).set(col, Sudoku.EMPTY_CELL);
                 } catch (Exception e) {
-                    // ...keep bad number around by doing nothing
+                    // ...keep bad numbers by doing nothing
                 }
             }
-        }   
+        }
     }
 
     /**
@@ -305,12 +321,13 @@ public class SudokuController {
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
             for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
 
-                int sudokuNumber = mSudoku.getElement(row, col);
-                TextField textCell = mTextGrid.get(row).get(col);
+                int sudokuNumber = sudoku.getElement(row, col);
+                TextField textCell = textGrid.get(row).get(col);
+
                 if (sudokuNumber == Sudoku.EMPTY_CELL) {
                     textCell.clear();
                 } else {
-                    textCell.pseudoClassStateChanged(SudokuController.cssBad, false);
+                    textCell.pseudoClassStateChanged(SudokuController.mCssBad, false);
                     textCell.setText(Integer.toString(sudokuNumber));
                 }
             }
@@ -321,8 +338,8 @@ public class SudokuController {
      * @param textGrid
      * @param badGrid
      */
-    static void renderBadNumbers(ArrayList<ArrayList<TextField>> textGrid, ArrayList<ArrayList<int>> badGrid) {
-        
+    static void renderBadNumbers(ArrayList<ArrayList<TextField>> textGrid, ArrayList<ArrayList<Integer>> badGrid) {
+
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
             for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
 
@@ -331,8 +348,8 @@ public class SudokuController {
                     continue;
                 }
 
-                TextField textCell = mTextGrid.get(row).get(col);
-                textCell.pseudoClassStateChanged(SudokuController.cssBad, true);
+                TextField textCell = textGrid.get(row).get(col);
+                textCell.pseudoClassStateChanged(SudokuController.mCssBad, true);
                 textCell.setText(Integer.toString(badNumber));
             }
         }
