@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javafx.application.Platform;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -183,37 +182,12 @@ public class SudokuController {
      */
     void valueChangedInCell(String newval, int row, int col) {
 
-        // Turn off event-handling while rendering to prevent infinite loop
         if (mIsRendering.get()) {
             return;
+            // ...dont handle anything while rendering to prevent infinite loop
         }
 
-        // 1. If newval is empty, we clear cell..
-        if (!newval.equals("")) {
-            // 2. Parse string -> int
-            int candidate = 0;
-            try {
-                candidate = Integer.parseInt(newval);
-                // 3. Add number to Sudoku
-                try {
-                    mSudoku.addNumber(row, col, candidate);
-                    // ...new cell added to the sudoku board
-
-                } catch (BadNumberException e) {
-                    mBadGrid.get(row).set(col, candidate);
-                    // ...kept the cell in the bad numbers grid.
-                } catch (IllegalArgumentException e) {
-                    // ...do nothing. The cell will be cleared
-                }
-            } catch (NumberFormatException e) {
-                // ...do nothing. The cell will be cleared
-            }
-        } else {
-            mSudoku.setElement(row, col, Sudoku.EMPTY_CELL);
-            mBadGrid.get(row).set(col, Sudoku.EMPTY_CELL);
-            // ...cell was cleared by user
-        }
-
+        SudokuController.addNewvalToSudoku(mSudoku, mBadGrid, newval, row, col);
         SudokuController.retryBadNumbers(mSudoku, mBadGrid);
 
         mIsRendering.set(true);
@@ -221,6 +195,47 @@ public class SudokuController {
         SudokuController.renderBadNumbers(mTextGrid, mBadGrid);
         mIsRendering.set(false);
     }
+
+    /**
+     * @param sudoku
+     * @param badGrid
+     * @param newval latest user input
+     * @param row    sudoku row index
+     * @param col    sudoku column index
+     */
+    static void addNewvalToSudoku(Sudoku sudoku, ArrayList<ArrayList<Integer>> badGrid, String newval, int row, int col) {
+
+        if (newval.equals("")) {
+            sudoku.setElement(row, col, Sudoku.EMPTY_CELL);
+            badGrid.get(row).set(col, Sudoku.EMPTY_CELL);
+            return;
+            // ...cell was cleared by user
+        }
+
+        int candidate = 0;
+        try {
+            candidate = Integer.parseInt(newval);
+
+        } catch (NumberFormatException e) {
+            return;
+            // ...do nothing. The cell will be cleared
+        }
+
+        try {
+            sudoku.addNumber(row, col, candidate);
+            // ...success
+
+        } catch (BadNumberException e) {
+            badGrid.get(row).set(col, candidate);
+            return;
+            // ...keeping the cell in the bad numbers grid.
+
+        } catch (IllegalArgumentException e) {
+            return;
+            // ...do nothing. The cell will be cleared
+        }
+    }
+
 
     /**
      * @return 2d array of fxml textField
