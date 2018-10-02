@@ -1,5 +1,6 @@
 package no.ntnu.imt3281.sudoku;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class SudokuController {
     /**
@@ -83,10 +86,20 @@ public class SudokuController {
     AtomicBoolean mIsRendering = new AtomicBoolean(false);
 
     /**
+     * file chooser
+     */
+    FileChooser mFileChooser;
+    
+    /**
      * fxml scene
      */
     static Scene mScene;
 
+    /**
+     * fxml stage
+     */
+    static Stage mStage;
+    
     /**
      * right lines in 3x3 boxes
      */
@@ -101,7 +114,14 @@ public class SudokuController {
      * bad numbers
      */
     static PseudoClass mCssBad = PseudoClass.getPseudoClass("bad");
-
+    
+    /**
+     * setStage
+     */
+    static void setStage(Stage stage) {
+        mStage = stage;
+    }
+    
     /**
      * fxml event
      */
@@ -109,15 +129,7 @@ public class SudokuController {
     void onClickExit(ActionEvent event) {
         System.out.println("OnClickExit");
     }
-
-    /**
-     * fxml event
-     */
-    @FXML
-    void onClickLoad(ActionEvent event) {
-        System.out.println("OnClickLoad");
-    }
-
+    
     /**
      * fxml event
      */
@@ -132,10 +144,43 @@ public class SudokuController {
 
     /**
      * fxml event
+     * @see https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm 01.09.18
+     */
+    @FXML
+    void onClickLoad(ActionEvent event) {
+        mFileChooser.setTitle("Load Game");
+        
+        File file = mFileChooser.showOpenDialog(mStage);
+        if (file == null) {
+            return;
+            // ... user did not select file
+        }
+
+        try {
+            mSudoku = Sudoku.loadSudokuFromFile(file.toPath());
+        } catch (IOException e) {
+            // ... TODO handle file not success 
+        }
+    }
+
+    /**
+     * fxml event
+     * @see https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm 01.09.18
      */
     @FXML
     void onClickSave(ActionEvent event) {
-        System.out.println("OnClickSave");
+        mFileChooser.setTitle("Save Game");
+
+        File file = mFileChooser.showSaveDialog(mStage);
+        if (file == null) {
+            return;
+            // ... user did not select file
+        }
+        try {
+            Sudoku.saveSudokuToFile(mSudoku, file.toPath());
+        } catch (IOException e) {
+            // ... TODO handle file not success 
+        }
     }
 
     /**
@@ -151,6 +196,7 @@ public class SudokuController {
         assert mGridParent != null : "fx:id=\"mGridParent\" was not injected: check your FXML file 'View.fxml'.";
 
         mSudoku = new Sudoku();
+        mFileChooser = new FileChooser();
         mBadGrid = SudokuController.makeBadGrid();
         mTextGrid = SudokuController.makeTextGrid();
         this.addTextGridOnChangedListeners();
