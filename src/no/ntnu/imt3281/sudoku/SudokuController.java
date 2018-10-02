@@ -81,14 +81,14 @@ public class SudokuController {
     ArrayList<ArrayList<Integer>> mBadGrid;
 
     /**
-     * is rendering
-     */
-    AtomicBoolean mIsRendering = new AtomicBoolean(false);
-
-    /**
      * file chooser
      */
     FileChooser mFileChooser;
+
+    /**
+     * is rendering
+     */
+    static AtomicBoolean mIsRendering = new AtomicBoolean(false);
     
     /**
      * fxml scene
@@ -158,6 +158,10 @@ public class SudokuController {
 
         try {
             mSudoku = Sudoku.loadSudokuFromFile(file.toPath());
+
+            mBadGrid = SudokuController.makeBadGrid();
+            SudokuController.renderValidNumbers(mTextGrid, mSudoku);
+
         } catch (IOException e) {
             // ... TODO handle file not success 
         }
@@ -178,6 +182,7 @@ public class SudokuController {
         }
         try {
             Sudoku.saveSudokuToFile(mSudoku, file.toPath());
+
         } catch (IOException e) {
             // ... TODO handle file not success 
         }
@@ -228,18 +233,15 @@ public class SudokuController {
      */
     void valueChangedInCell(String newval, int row, int col) {
 
-        if (mIsRendering.get()) {
+        if (SudokuController.mIsRendering.get()) {
             return;
             // ...dont handle anything while rendering to prevent infinite loop
         }
 
         SudokuController.addNewvalToSudoku(mSudoku, mBadGrid, newval, row, col);
         SudokuController.retryBadNumbers(mSudoku, mBadGrid);
-
-        mIsRendering.set(true);
         SudokuController.renderValidNumbers(mTextGrid, mSudoku);
         SudokuController.renderBadNumbers(mTextGrid, mBadGrid);
-        mIsRendering.set(false);
     }
 
     /**
@@ -379,6 +381,8 @@ public class SudokuController {
      */
     static void renderValidNumbers(ArrayList<ArrayList<TextField>> textGrid, Sudoku sudoku) {
 
+        SudokuController.mIsRendering.set(true);
+
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
             for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
 
@@ -393,6 +397,7 @@ public class SudokuController {
                 }
             }
         }
+        SudokuController.mIsRendering.set(false);
     }
 
     /**
@@ -400,6 +405,8 @@ public class SudokuController {
      * @param badGrid
      */
     static void renderBadNumbers(ArrayList<ArrayList<TextField>> textGrid, ArrayList<ArrayList<Integer>> badGrid) {
+
+        SudokuController.mIsRendering.set(true);
 
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
             for (int col = 0; col < Sudoku.COL_SIZE; ++col) {
@@ -414,5 +421,6 @@ public class SudokuController {
                 textCell.setText(Integer.toString(badNumber));
             }
         }
+        SudokuController.mIsRendering.set(false);
     }
 }
