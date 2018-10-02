@@ -38,3 +38,7 @@
 .cell:bad {
     -fx-text-fill: #f44242;
 }
+
+.cell:locked {
+    -fx-text-fill: #4286f4;
+}

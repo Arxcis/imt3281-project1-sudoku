@@ -103,18 +103,23 @@ public class SudokuController {
     /**
      * right lines in 3x3 boxes
      */
-    static PseudoClass mCssRight = PseudoClass.getPseudoClass("right");
+    static PseudoClass mCSSRight = PseudoClass.getPseudoClass("right");
 
     /**
      * bottom lines 3x3 boxes
      */
-    static PseudoClass mCssBottom = PseudoClass.getPseudoClass("bottom");
+    static PseudoClass mCSSBottom = PseudoClass.getPseudoClass("bottom");
 
     /**
      * bad numbers
      */
-    static PseudoClass mCssBad = PseudoClass.getPseudoClass("bad");
+    static PseudoClass mCSSBad = PseudoClass.getPseudoClass("bad");
     
+    /**
+     * locked numbers
+     */
+    static PseudoClass mCSSLocked = PseudoClass.getPseudoClass("locked");
+
     /**
      * setStage
      */
@@ -158,10 +163,12 @@ public class SudokuController {
 
         try {
             mSudoku = Sudoku.loadSudokuFromFile(file.toPath());
-
+            mSudoku.lockNumbers();
             mBadGrid = SudokuController.makeBadGrid();
             SudokuController.renderValidNumbers(mTextGrid, mSudoku);
 
+        } catch (InvalidSudokuFileException e) {
+            // ... TODO handle file not valid 
         } catch (IOException e) {
             // ... TODO handle file not success 
         }
@@ -186,6 +193,26 @@ public class SudokuController {
         } catch (IOException e) {
             // ... TODO handle file not success 
         }
+    }
+
+    /**
+     * fxml event
+     */
+    @FXML
+    void onClickLock(ActionEvent event) {
+        mSudoku.lockNumbers();
+        SudokuController.renderValidNumbers(mTextGrid, mSudoku);
+        SudokuController.renderBadNumbers(mTextGrid, mBadGrid);    
+    }
+
+    /**
+     * fxml event
+     */
+    @FXML
+    void onClickUnlock(ActionEvent event) {
+        mSudoku.unlockNumbers();
+        SudokuController.renderValidNumbers(mTextGrid, mSudoku);
+        SudokuController.renderBadNumbers(mTextGrid, mBadGrid);
     }
 
     /**
@@ -252,6 +279,11 @@ public class SudokuController {
      * @param col    sudoku column index
      */
     static void addNewvalToSudoku(Sudoku sudoku, ArrayList<ArrayList<Integer>> badGrid, String newval, int row, int col) {
+
+        if (sudoku.isNumberLocked(row, col)) {
+            return;
+            // ... do nothing
+        }
 
         if (newval.equals("")) {
             sudoku.setElement(row, col, Sudoku.EMPTY_CELL);
@@ -344,8 +376,8 @@ public class SudokuController {
                 anchor.setMaxSize(200, 200);
 
                 anchor.getStyleClass().add("anchor");
-                anchor.pseudoClassStateChanged(SudokuController.mCssRight, col == 2 || col == 5);
-                anchor.pseudoClassStateChanged(SudokuController.mCssBottom, row == 2 || row == 5);
+                anchor.pseudoClassStateChanged(SudokuController.mCSSRight, col == 2 || col == 5);
+                anchor.pseudoClassStateChanged(SudokuController.mCSSBottom, row == 2 || row == 5);
 
                 parent.add(anchor, col, row);
             }
@@ -389,12 +421,19 @@ public class SudokuController {
                 int sudokuNumber = sudoku.getElement(row, col);
                 TextField textCell = textGrid.get(row).get(col);
 
+                textCell.pseudoClassStateChanged(SudokuController.mCSSBad, false);
+
                 if (sudokuNumber == Sudoku.EMPTY_CELL) {
                     textCell.clear();
+                    continue;
+                } 
+
+                if (sudoku.isNumberLocked(row, col)) {
+                    textCell.pseudoClassStateChanged(SudokuController.mCSSLocked, true);
                 } else {
-                    textCell.pseudoClassStateChanged(SudokuController.mCssBad, false);
-                    textCell.setText(Integer.toString(sudokuNumber));
+                    textCell.pseudoClassStateChanged(SudokuController.mCSSLocked, false);                        
                 }
+                textCell.setText(Integer.toString(sudokuNumber));            
             }
         }
         SudokuController.mIsRendering.set(false);
@@ -417,10 +456,11 @@ public class SudokuController {
                 }
 
                 TextField textCell = textGrid.get(row).get(col);
-                textCell.pseudoClassStateChanged(SudokuController.mCssBad, true);
+                textCell.pseudoClassStateChanged(SudokuController.mCSSBad, true);
                 textCell.setText(Integer.toString(badNumber));
             }
         }
         SudokuController.mIsRendering.set(false);
     }
 }
+
