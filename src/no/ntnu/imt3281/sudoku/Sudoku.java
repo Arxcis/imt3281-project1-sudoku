@@ -296,6 +296,20 @@ public class Sudoku {
     }
 
     /**
+     * isSolved
+     */
+    public boolean isSolved() {
+        for (int row = 0; row < ROW_SIZE; row++) {
+            for (int col = 0; col < COL_SIZE; col++) {
+                if (getElement(row, col) == Sudoku.EMPTY_CELL) {
+                    return false;                    
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Checks if a specific number in the sudoku board is locked.
      *
      * @param row The row containing the number to check.
