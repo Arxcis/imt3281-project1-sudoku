@@ -15,6 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
+import no.ntnu.imt3281.language.LanguageBundler;
+
 public class ViewController {
     /**
      * Load and build a scene from an FXML document
@@ -23,7 +25,7 @@ public class ViewController {
      */
     public static Scene loadScene() throws IOException {
         final URL fxml = ViewController.class.getResource("View.fxml");
-        final Parent root = FXMLLoader.load(fxml, Language.getBundle());
+        final Parent root = FXMLLoader.load(fxml, LanguageBundler.getBundle());
 
         mScene = new Scene(root);
         mScene.getStylesheets().add(ViewController.class.getResource("View.css").toString());

@@ -13,8 +13,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import no.ntnu.imt3281.language.LanguageBundler;
 
+public class Main extends Application {
     /**
      * Helper in stop() to shut down threads
      */
@@ -26,7 +27,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         
-        Language.init();
+        LanguageBundler.init();
         Scene scene = null;
         scene = ViewController.loadScene();
         primaryStage.setTitle("Sudoku");
