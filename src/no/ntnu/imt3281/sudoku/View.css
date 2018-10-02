@@ -42,3 +42,7 @@
 .cell:locked {
     -fx-text-fill: #4286f4;
 }
+
+.cell:solved {
+    -fx-text-fill: #84e03e;
+}
