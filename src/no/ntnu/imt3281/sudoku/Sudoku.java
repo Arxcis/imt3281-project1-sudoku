@@ -29,6 +29,10 @@ public class Sudoku {
     public static final int GRID_COUNT = 9;
     public static final int EMPTY_CELL = -1;
 
+    public enum Axis {
+        HORIZONTAL, VERTICAL, DIAGONALSLASH, DIAGONALBACKSLASH
+    };
+
     /**
      * Representation of a cell in the sudoku board, containing both a value and a
      * bool indicating if it is locked.
@@ -287,6 +291,45 @@ public class Sudoku {
      */
     public boolean isNumberLocked(int row, int col) {
         return mSudokuBoard.get(row).get(col).isLocked();
+    }
+
+    /**
+     * Flips the board around the given axis
+     *
+     * @param flipAxis The axis to flip the board around
+     */
+    public void flipBoard(Axis flipAroundAxis) {
+        switch (flipAroundAxis) {
+        case HORIZONTAL:
+            Collections.reverse(mSudokuBoard);
+            break;
+
+        case VERTICAL:
+            for (int row = 0; row < ROW_SIZE; row++) {
+                Collections.reverse(mSudokuBoard.get(row));
+            }
+            break;
+
+        case DIAGONALSLASH:
+            for (int row = 0; row < ROW_SIZE; row++) {
+                for (int col = 0; col < COL_SIZE - row - 1; col++) {
+                    int temp = getElement(row, col);
+                    setElement(row, col, getElement(ROW_SIZE - col - 1, COL_SIZE - row - 1));
+                    setElement(ROW_SIZE - col - 1, COL_SIZE - row - 1, temp);
+                }
+            }
+            break;
+
+        case DIAGONALBACKSLASH:
+            for (int row = 0; row < ROW_SIZE; row++) {
+                for (int col = 1 + row; col < COL_SIZE; col++) {
+                    int temp = getElement(row, col);
+                    setElement(row, col, getElement(col, row));
+                    setElement(col, row, temp);
+                }
+            }
+            break;
+        }
     }
 
     /**
