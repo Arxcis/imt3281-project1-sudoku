@@ -21,8 +21,6 @@ public class SudokuControllerFxTest extends ApplicationTest {
         Scene scene = null;
         scene = SudokuController.loadScene();
         stage.setScene(scene);
-        stage.show();
-        stage.toFront();
     }
 
 
