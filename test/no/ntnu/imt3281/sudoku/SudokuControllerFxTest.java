@@ -5,6 +5,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 
@@ -21,8 +23,9 @@ public class SudokuControllerFxTest extends ApplicationTest {
         Scene scene = null;
         scene = SudokuController.loadScene();
         stage.setScene(scene);
+        stage.show();
+        stage.toFront();
     }
-
 
     @Test
     public void testMakeTextGrid () {
