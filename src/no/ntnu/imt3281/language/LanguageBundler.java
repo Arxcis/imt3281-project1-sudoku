@@ -1,17 +1,14 @@
 package no.ntnu.imt3281.language;
 
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
  * Manage Language strings. Access from anywhere in Sudoku package.
  */
 public class LanguageBundler {
-    /*
-     * Resource bundle differs based on default locale
+    /**
+     * Load and create language bundle
      */
-    private static ResourceBundle bundle;
-
     public static void init() {
 
         LanguageBundler.bundle = ResourceBundle.getBundle("no.ntnu.imt3281.language.Bundle");
@@ -24,4 +21,8 @@ public class LanguageBundler {
         return LanguageBundler.bundle;
     }
 
+    static final String bundlePath = "no.ntnu.imt3281.sudoku.LanguageBundle";
+    static ResourceBundle bundle;
+    
+    Language() {}
 }

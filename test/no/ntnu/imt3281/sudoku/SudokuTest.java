@@ -491,4 +491,84 @@ public class SudokuTest {
             }
         }
     }
+
+    /////////////////////////////////////////////////////
+    /// Flip board tests
+    /////////////////////////////////////////////////////
+    @Test
+    public void flipBoardHorizontalTest() {
+        var string = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" + "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n"
+                + "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" + "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n"
+                + "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" + "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n"
+                + "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" + "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n"
+                + "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var originalBoard = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.loadSudokuFromJson(string);
+        sudoku.flipBoard(Sudoku.Axis.HORIZONTAL);
+
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                assertTrue(sudoku.getElement(row, col) == originalBoard.getElement(Sudoku.ROW_SIZE - row - 1, col));
+            }
+        }
+    }
+
+    @Test
+    public void flipBoardVerticalTest() {
+        var string = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" + "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n"
+                + "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" + "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n"
+                + "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" + "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n"
+                + "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" + "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n"
+                + "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var originalBoard = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.loadSudokuFromJson(string);
+        sudoku.flipBoard(Sudoku.Axis.VERTICAL);
+
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                assertTrue(sudoku.getElement(row, col) == originalBoard.getElement(row, Sudoku.COL_SIZE - col - 1));
+            }
+        }
+    }
+
+    @Test
+    public void flipBoardDiagonalSlashTest() {
+        var string = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" + "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n"
+                + "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" + "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n"
+                + "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" + "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n"
+                + "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" + "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n"
+                + "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var originalBoard = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.loadSudokuFromJson(string);
+        sudoku.flipBoard(Sudoku.Axis.DIAGONALSLASH);
+
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                assertTrue(sudoku.getElement(row, col) == originalBoard.getElement(Sudoku.ROW_SIZE - col - 1,
+                        Sudoku.COL_SIZE - row - 1));
+            }
+        }
+    }
+
+    @Test
+    public void flipBoardDiagonalBackslashTest() {
+        var string = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" + "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n"
+                + "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" + "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n"
+                + "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" + "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n"
+                + "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" + "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n"
+                + "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var originalBoard = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.loadSudokuFromJson(string);
+        sudoku.flipBoard(Sudoku.Axis.DIAGONALBACKSLASH);
+
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                assertTrue(sudoku.getElement(row, col) == originalBoard.getElement(col, row));
+            }
+        }
+    }
 }

@@ -29,6 +29,10 @@ public class Sudoku {
     public static final int GRID_COUNT = 9;
     public static final int EMPTY_CELL = -1;
 
+    public enum Axis {
+        HORIZONTAL, VERTICAL, DIAGONALSLASH, DIAGONALBACKSLASH
+    };
+
     /**
      * Representation of a cell in the sudoku board, containing both a value and a
      * bool indicating if it is locked.
@@ -69,6 +73,15 @@ public class Sudoku {
         private void lock() {
             if (mValue != EMPTY_CELL) {
                 mIsLocked = true;
+            }
+        }
+
+        /**
+         *
+         */
+        private void unlock() {
+            if (mValue != EMPTY_CELL) {
+                mIsLocked = false;
             }
         }
     }
@@ -151,16 +164,15 @@ public class Sudoku {
     public static Sudoku loadSudokuFromFile(final Path filepath) throws IOException {
         var board = new Sudoku();
 
-        try (var reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath.toFile()),
-                                                                                       StandardCharsets.UTF_8))) {
+        try (var reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(filepath.toFile()), StandardCharsets.UTF_8))) {
 
             // Don't really like having to traverse this entire thing twice by putting it
             // into a list,
             // but I can't come up with a way to traverse it only once, without all the
             // messy logic that the previous implementation suffered from.
-            var lines = reader.lines()
-                              .filter(item -> Objects.nonNull(item) && !"".equals(item))
-                              .collect(Collectors.toList());
+            var lines = reader.lines().filter(item -> Objects.nonNull(item) && !"".equals(item))
+                    .collect(Collectors.toList());
 
             if (lines.size() != Sudoku.ROW_SIZE) {
                 throw new InvalidSudokuFileException();
@@ -168,8 +180,7 @@ public class Sudoku {
 
             for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
                 var columns = Arrays.stream(lines.get(row).split("[, ]"))
-                                    .filter(item -> Objects.nonNull(item) && !"".equals(item))
-                                    .collect(Collectors.toList());
+                        .filter(item -> Objects.nonNull(item) && !"".equals(item)).collect(Collectors.toList());
 
                 // Each column in a row is supposed to contain 2 pieces of information.
                 // The value and whether or not it is locked.
@@ -277,6 +288,31 @@ public class Sudoku {
     }
 
     /**
+     * unlockNumbers
+     */
+    public void unlockNumbers() {
+        for (int row = 0; row < ROW_SIZE; row++) {
+            for (int col = 0; col < COL_SIZE; col++) {
+                mSudokuBoard.get(row).get(col).unlock();
+            }
+        }
+    }
+
+    /**
+     * isSolved
+     */
+    public boolean isSolved() {
+        for (int row = 0; row < ROW_SIZE; row++) {
+            for (int col = 0; col < COL_SIZE; col++) {
+                if (getElement(row, col) == Sudoku.EMPTY_CELL) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Checks if a specific number in the sudoku board is locked.
      *
      * @param row The row containing the number to check.
@@ -287,6 +323,45 @@ public class Sudoku {
      */
     public boolean isNumberLocked(int row, int col) {
         return mSudokuBoard.get(row).get(col).isLocked();
+    }
+
+    /**
+     * Flips the board around the given axis
+     *
+     * @param flipAxis The axis to flip the board around
+     */
+    public void flipBoard(Axis flipAroundAxis) {
+        switch (flipAroundAxis) {
+        case HORIZONTAL:
+            Collections.reverse(mSudokuBoard);
+            break;
+
+        case VERTICAL:
+            for (int row = 0; row < ROW_SIZE; row++) {
+                Collections.reverse(mSudokuBoard.get(row));
+            }
+            break;
+
+        case DIAGONALSLASH:
+            for (int row = 0; row < ROW_SIZE; row++) {
+                for (int col = 0; col < COL_SIZE - row - 1; col++) {
+                    int temp = getElement(row, col);
+                    setElement(row, col, getElement(ROW_SIZE - col - 1, COL_SIZE - row - 1));
+                    setElement(ROW_SIZE - col - 1, COL_SIZE - row - 1, temp);
+                }
+            }
+            break;
+
+        case DIAGONALBACKSLASH:
+            for (int row = 0; row < ROW_SIZE; row++) {
+                for (int col = 1 + row; col < COL_SIZE; col++) {
+                    int temp = getElement(row, col);
+                    setElement(row, col, getElement(col, row));
+                    setElement(col, row, temp);
+                }
+            }
+            break;
+        }
     }
 
     /**

@@ -29,7 +29,8 @@ public class Main extends Application {
         
         LanguageBundler.init();
         Scene scene = null;
-        scene = ViewController.loadScene();
+        scene = SudokuController.loadScene();
+        SudokuController.setStage(primaryStage);
         primaryStage.setTitle("Sudoku");
         primaryStage.setScene(scene);
         primaryStage.show();
