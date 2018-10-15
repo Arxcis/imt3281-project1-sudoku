@@ -29,6 +29,7 @@ public class Main extends Application {
         Language.init();
         Scene scene = null;
         scene = SudokuController.loadScene();
+        SudokuController.setStage(primaryStage);
         primaryStage.setTitle("Sudoku");
         primaryStage.setScene(scene);
         primaryStage.show();
