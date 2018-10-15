@@ -17,6 +17,8 @@
             <Button fx:id="mBtnSave" mnemonicParsing="false" onAction="#onClickSave" text="%save" />
             <Button fx:id="mBtnLoad" mnemonicParsing="false" onAction="#onClickLoad" text="%load" />
             <Button fx:id="mBtnExit" mnemonicParsing="false" onAction="#onClickExit" text="%exit" />
+            <Button fx:id="mBtnLock" mnemonicParsing="false" onAction="#onClickLock" text="%lock" />
+            <Button fx:id="mBtnUnlock" mnemonicParsing="false" onAction="#onClickUnlock" text="%unlock" />
         </items>
       </ToolBar>
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="1000.0" prefWidth="200.0" />

@@ -75,6 +75,14 @@ public class Sudoku {
                 mIsLocked = true;
             }
         }
+        /**
+         *
+         */
+        private void unlock() {
+            if (mValue != EMPTY_CELL) {
+                mIsLocked = false;
+            }
+        }
     }
 
     /**
@@ -276,6 +284,17 @@ public class Sudoku {
         for (int row = 0; row < ROW_SIZE; row++) {
             for (int col = 0; col < COL_SIZE; col++) {
                 mSudokuBoard.get(row).get(col).lock();
+            }
+        }
+    }
+
+    /**
+     * unlockNumbers
+     */
+    public void unlockNumbers() {
+        for (int row = 0; row < ROW_SIZE; row++) {
+            for (int col = 0; col < COL_SIZE; col++) {
+                mSudokuBoard.get(row).get(col).unlock();
             }
         }
     }
