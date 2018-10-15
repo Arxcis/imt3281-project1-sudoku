@@ -75,6 +75,7 @@ public class Sudoku {
                 mIsLocked = true;
             }
         }
+
         /**
          *
          */
@@ -163,16 +164,15 @@ public class Sudoku {
     public static Sudoku loadSudokuFromFile(final Path filepath) throws IOException {
         var board = new Sudoku();
 
-        try (var reader = new BufferedReader(new InputStreamReader(new FileInputStream(filepath.toFile()),
-                                                                                       StandardCharsets.UTF_8))) {
+        try (var reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(filepath.toFile()), StandardCharsets.UTF_8))) {
 
             // Don't really like having to traverse this entire thing twice by putting it
             // into a list,
             // but I can't come up with a way to traverse it only once, without all the
             // messy logic that the previous implementation suffered from.
-            var lines = reader.lines()
-                              .filter(item -> Objects.nonNull(item) && !"".equals(item))
-                              .collect(Collectors.toList());
+            var lines = reader.lines().filter(item -> Objects.nonNull(item) && !"".equals(item))
+                    .collect(Collectors.toList());
 
             if (lines.size() != Sudoku.ROW_SIZE) {
                 throw new InvalidSudokuFileException();
@@ -180,8 +180,7 @@ public class Sudoku {
 
             for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
                 var columns = Arrays.stream(lines.get(row).split("[, ]"))
-                                    .filter(item -> Objects.nonNull(item) && !"".equals(item))
-                                    .collect(Collectors.toList());
+                        .filter(item -> Objects.nonNull(item) && !"".equals(item)).collect(Collectors.toList());
 
                 // Each column in a row is supposed to contain 2 pieces of information.
                 // The value and whether or not it is locked.
@@ -297,6 +296,20 @@ public class Sudoku {
                 mSudokuBoard.get(row).get(col).unlock();
             }
         }
+    }
+
+    /**
+     * isSolved
+     */
+    public boolean isSolved() {
+        for (int row = 0; row < ROW_SIZE; row++) {
+            for (int col = 0; col < COL_SIZE; col++) {
+                if (getElement(row, col) == Sudoku.EMPTY_CELL) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
