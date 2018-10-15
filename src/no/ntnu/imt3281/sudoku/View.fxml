@@ -9,21 +9,21 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="no.ntnu.imt3281.sudoku.ViewController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="no.ntnu.imt3281.sudoku.SudokuController">
    <children>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
-          <Button fx:id="mBtnNewGame" mnemonicParsing="false" onAction="#OnClickNewGame" text="%new.game" />
-            <Button fx:id="mBtnSave" mnemonicParsing="false" onAction="#OnClickSave" text="%save" />
-            <Button fx:id="mBtnLoad" mnemonicParsing="false" onAction="#OnClickLoad" text="%load" />
-            <Button fx:id="mBtnExit" mnemonicParsing="false" onAction="#OnClickExit" text="%exit" />
+          <Button fx:id="mBtnNewGame" mnemonicParsing="false" onAction="#onClickNewGame" text="%new.game" />
+            <Button fx:id="mBtnSave" mnemonicParsing="false" onAction="#onClickSave" text="%save" />
+            <Button fx:id="mBtnLoad" mnemonicParsing="false" onAction="#onClickLoad" text="%load" />
+            <Button fx:id="mBtnExit" mnemonicParsing="false" onAction="#onClickExit" text="%exit" />
         </items>
       </ToolBar>
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="30.0" prefHeight="1000.0" prefWidth="200.0" />
       <HBox prefHeight="300.0" prefWidth="600.0">
          <children>
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="3000.0" />
-            <GridPane fx:id="mGrid">
+            <GridPane fx:id="mGridParent">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="50.0" prefWidth="50.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="50.0" prefWidth="100.0" />
