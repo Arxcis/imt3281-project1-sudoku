@@ -29,9 +29,14 @@ public class Sudoku {
     public static final int GRID_COUNT = 9;
     public static final int EMPTY_CELL = -1;
 
+    /**
+     * Enum used to indicate which way a Sudoku board should be flipped.
+     *
+     * @see Sudoku#flipBoard(Axis)
+     */
     public enum Axis {
         HORIZONTAL, VERTICAL, DIAGONALSLASH, DIAGONALBACKSLASH
-    };
+    }
 
     /**
      * Representation of a cell in the sudoku board, containing both a value and a
@@ -171,8 +176,9 @@ public class Sudoku {
             // into a list,
             // but I can't come up with a way to traverse it only once, without all the
             // messy logic that the previous implementation suffered from.
-            var lines = reader.lines().filter(item -> Objects.nonNull(item) && !"".equals(item))
-                    .collect(Collectors.toList());
+            var lines = reader.lines()
+                        .filter(item -> Objects.nonNull(item) && !"".equals(item))
+                        .collect(Collectors.toList());
 
             if (lines.size() != Sudoku.ROW_SIZE) {
                 throw new InvalidSudokuFileException();
@@ -180,7 +186,8 @@ public class Sudoku {
 
             for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
                 var columns = Arrays.stream(lines.get(row).split("[, ]"))
-                        .filter(item -> Objects.nonNull(item) && !"".equals(item)).collect(Collectors.toList());
+                            .filter(item -> Objects.nonNull(item) && !"".equals(item))
+                            .collect(Collectors.toList());
 
                 // Each column in a row is supposed to contain 2 pieces of information.
                 // The value and whether or not it is locked.
@@ -328,7 +335,7 @@ public class Sudoku {
     /**
      * Flips the board around the given axis
      *
-     * @param flipAxis The axis to flip the board around
+     * @param flipAroundAxis The axis to flip the board around
      */
     public void flipBoard(Axis flipAroundAxis) {
         switch (flipAroundAxis) {

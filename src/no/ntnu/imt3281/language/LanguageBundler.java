@@ -6,6 +6,11 @@ import java.util.ResourceBundle;
  * Manage Language strings. Access from anywhere in Sudoku package.
  */
 public class LanguageBundler {
+    private static ResourceBundle bundle;
+
+    private LanguageBundler() {
+    }
+
     /**
      * Load and create language bundle
      */
@@ -21,8 +26,4 @@ public class LanguageBundler {
         return LanguageBundler.bundle;
     }
 
-    static final String bundlePath = "no.ntnu.imt3281.sudoku.LanguageBundle";
-    static ResourceBundle bundle;
-
-    LanguageBundler() {}
 }
