@@ -18,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import no.ntnu.imt3281.language.LanguageBundler;
 
 public class SudokuController {
     /**
@@ -27,7 +28,7 @@ public class SudokuController {
      */
     public static Scene loadScene() throws IOException {
         final URL fxml = SudokuController.class.getResource("View.fxml");
-        final Parent root = FXMLLoader.load(fxml, Language.getBundle());
+        final Parent root = FXMLLoader.load(fxml, LanguageBundler.getBundle());
 
         mScene = new Scene(root);
         mScene.getStylesheets().add(SudokuController.class.getResource("View.css").toString());
@@ -154,7 +155,7 @@ public class SudokuController {
 
     /**
      * fxml event
-     * 
+     *
      * @see https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm 01.09.18
      */
     @FXML
@@ -183,7 +184,7 @@ public class SudokuController {
 
     /**
      * fxml event
-     * 
+     *
      * @see https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm 01.09.18
      */
     @FXML
@@ -260,7 +261,7 @@ public class SudokuController {
 
     /**
      * Parse, Validate input. Clear cell if not valid
-     * 
+     *
      * @param newval latest user input
      * @param row    sudoku row index
      * @param col    sudoku column index
