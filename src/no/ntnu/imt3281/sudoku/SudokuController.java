@@ -175,7 +175,7 @@ public class SudokuController {
 
             this.render();
 
-        } catch (InvalidSudokuFileException e) {
+        } catch (InvalidSudokuBoardException e) {
             // ... TODO handle file not valid
         } catch (IOException e) {
             // ... TODO handle file not success

@@ -18,6 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  * Sudoku class is a representation of a Sudoku board with the standard 9*9 grid
@@ -121,12 +122,24 @@ public class Sudoku {
      * @param jsonString String containing the
      * @return a new Sudoku board constructed from the supplied json string.
      */
-    public static Sudoku loadSudokuFromJson(final String jsonString) {
-        var board = new Sudoku();
-        var array = new JSONArray(jsonString);
+    public static Sudoku parseSudokuFromJson(final String jsonString) {
+        JSONArray array;
+        try {
+            array = new JSONArray(jsonString);
+        } catch(JSONException e) {
+            throw new InvalidSudokuBoardException();
+        }
 
+        if (array.length() != Sudoku.ROW_SIZE) {
+            throw new InvalidSudokuBoardException();
+        }
+
+        var board = new Sudoku();
         for (int row = 0; row < array.length(); row++) {
             var jsonRow = array.getJSONArray(row);
+            if (jsonRow.length() != Sudoku.COL_SIZE) {
+                throw new InvalidSudokuBoardException();
+            }
 
             for (int col = 0; col < jsonRow.length(); col++) {
                 var value = jsonRow.getInt(col);
@@ -140,6 +153,53 @@ public class Sudoku {
         }
 
         return board;
+    }
+
+    /**
+     * Loads a Sudoku board from the given string
+     *
+     * @param string The string containing the sudoku information to load.
+     *
+     * @exception InvalidSudokuBoardException Throws InvalidSudokuBoardException in
+     *                                       the case where the sudoku file is not
+     *                                       formatted properly, or is incomplete
+     *                                       (for example, missing a row or column).
+     *
+     * @return a new Sudoku board with the contents loaded from the string.
+     */
+    public static Sudoku parseSudokuFromString(final String string) {
+        var board = new Sudoku();
+        var numbers = Arrays.stream(string.split("[, \n]"))
+                          .filter(item -> Objects.nonNull(item) && !"".equals(item))
+                          .collect(Collectors.toList());
+
+
+        if (numbers.size() != Sudoku.ROW_SIZE * (Sudoku.COL_SIZE * 2)) {
+            throw new InvalidSudokuBoardException();
+        }
+
+        for (int pos = 0, field = 0; pos < Sudoku.ROW_SIZE * Sudoku.COL_SIZE; pos++, field += 2) {
+            int value = Integer.parseInt(numbers.get(field));
+            int locked = Integer.parseInt(numbers.get(field + 1));
+
+            if (value == Sudoku.EMPTY_CELL) {
+                if (locked == 1) {
+                    throw new InvalidSudokuBoardException();
+                }
+                continue;
+            }
+
+            int row = pos / COL_SIZE;
+            int col = pos % COL_SIZE;
+
+            board.addNumber(row, col, value);
+            if (locked == 1) {
+                board.mSudokuBoard.get(row).get(col).lock();
+            }
+        }
+
+        return board;
+
     }
 
     /**
@@ -203,62 +263,23 @@ public class Sudoku {
      *
      * @return A new sudoku board containing the configuration in the file.
      *
-     * @exception InvalidSudokuFileException Throws InvalidSudokuFileException in
-     *                                       the case where the sudoku file is not
-     *                                       formatted properly, or is incomplete
-     *                                       (for example, missing a row or column).
-     *
      * @exception IOException                Throws IOException on IO errors.
      */
     public static Sudoku loadSudokuFromFile(final Path filepath) throws IOException {
-        var board = new Sudoku();
-
         try (var reader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(filepath.toFile()), StandardCharsets.UTF_8))) {
 
-            // Don't really like having to traverse this entire thing twice by putting it
-            // into a list,
-            // but I can't come up with a way to traverse it only once, without all the
-            // messy logic that the previous implementation suffered from.
             var lines = reader.lines()
                         .filter(item -> Objects.nonNull(item) && !"".equals(item))
-                        .collect(Collectors.toList());
+                        .collect(Collectors.joining());
 
-            if (lines.size() != Sudoku.ROW_SIZE) {
-                throw new InvalidSudokuFileException();
+            if (filepath.toString().endsWith(".json")) {
+                return parseSudokuFromJson(lines);
             }
-
-            for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
-                var columns = Arrays.stream(lines.get(row).split("[, ]"))
-                            .filter(item -> Objects.nonNull(item) && !"".equals(item))
-                            .collect(Collectors.toList());
-
-                // Each column in a row is supposed to contain 2 pieces of information.
-                // The value and whether or not it is locked.
-                if (columns.size() != Sudoku.COL_SIZE * 2) {
-                    throw new InvalidSudokuFileException();
-                }
-
-                for (int col = 0, fieldCount = 0; col < Sudoku.COL_SIZE; col++, fieldCount += 2) {
-                    int value = Integer.parseInt(columns.get(fieldCount));
-                    int locked = Integer.parseInt(columns.get(fieldCount + 1));
-
-                    if (value == Sudoku.EMPTY_CELL) {
-                        if (locked == 1) {
-                            throw new InvalidSudokuFileException();
-                        }
-                        continue;
-                    }
-
-                    board.addNumber(row, col, value);
-                    if (locked == 1) {
-                        board.mSudokuBoard.get(row).get(col).lock();
-                    }
-                }
+            else {
+                return parseSudokuFromString(lines);
             }
         }
-
-        return board;
     }
 
     /**
