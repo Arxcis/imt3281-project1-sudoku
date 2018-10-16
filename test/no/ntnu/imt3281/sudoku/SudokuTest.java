@@ -255,6 +255,28 @@ public class SudokuTest {
         sudoku.addNumber(0, 2, 4);
     }
 
+    @Test
+    public void allNumbersAreUnlockedOnUnlock() {
+        var string = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" +
+                "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n" +
+                "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" +
+                "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n" +
+                "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" +
+                "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n" +
+                "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" +
+                "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
+                "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var sudoku = Sudoku.loadSudokuFromJson(string);
+        sudoku.lockNumbers();
+        sudoku.unlockNumbers();
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                assertTrue(sudoku.isNumberLocked(row, col) == false);
+            }
+        }
+    }
+
     ///////////////////////////////////////////////////////
     /// Saving and loading tests
     ///////////////////////////////////////////////////////
