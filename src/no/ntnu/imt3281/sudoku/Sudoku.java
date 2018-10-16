@@ -8,11 +8,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
@@ -36,6 +38,15 @@ public class Sudoku {
      */
     public enum Axis {
         HORIZONTAL, VERTICAL, DIAGONALSLASH, DIAGONALBACKSLASH
+    }
+
+    /**
+     * Enum used to indicate the difficulty a Sudoku board should be created with.
+     *
+     * @see Sudoku#createSudokuOfDifficulty(Difficulty)
+     */
+    public enum Difficulty {
+        EASY, HARD
     }
 
     /**
@@ -129,6 +140,39 @@ public class Sudoku {
         }
 
         return board;
+    }
+
+    /**
+     * Creates a sudoku with of given difficulty. Essentially the function just
+     * loads one of the preset boards from file based on difficulty, shuffles it
+     * around and randomizes it before locking all the relevant cells.
+     *
+     * @param difficulty The difficulty of the game.
+     * @return A new sudoku board of the specified difficulty.
+     * @throws IOException Throws IOException of any IOExceptions occurs.
+     */
+    public static Sudoku createSudokuOfDifficulty(Difficulty difficulty) throws IOException {
+        // Couldn't just append path when getting the path to the current folder for
+        // some reason, so doing it this hacky way instead.
+        var path = Paths.get(Paths.get("").toAbsolutePath().toString()
+                + String.format("/sudoku_presets/%s.sudoku", difficulty.toString().toLowerCase()));
+
+        var sudoku = loadSudokuFromFile(path);
+
+        var numberOfFlips = ThreadLocalRandom.current().nextInt(0, 10);
+        for (int i = 0; i < numberOfFlips; i++) {
+            var diagonalToFlip = ThreadLocalRandom.current().nextInt(0, Axis.values().length);
+            sudoku.flipBoard(Axis.values()[diagonalToFlip]);
+        }
+
+        var numberOfRandomizations = ThreadLocalRandom.current().nextInt(0, 10);
+        for (int i = 0; i < numberOfRandomizations; i++) {
+            sudoku.randomizeAllExistingElements();
+        }
+
+        sudoku.lockNumbers();
+
+        return sudoku;
     }
 
     /**

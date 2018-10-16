@@ -14,6 +14,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import no.ntnu.imt3281.sudoku.Sudoku.Difficulty;
+
 public class SudokuTest {
     ///////////////////////////////////////////////////////
     /// Constructor tests
@@ -570,5 +572,15 @@ public class SudokuTest {
                 assertTrue(sudoku.getElement(row, col) == originalBoard.getElement(col, row));
             }
         }
+    }
+
+    @Test
+    public void canCreateEasySudoku() throws IOException {
+        var sudoku = Sudoku.createSudokuOfDifficulty(Difficulty.EASY);
+    }
+
+    @Test
+    public void canCreateHardSudoku() throws IOException {
+        var sudoku = Sudoku.createSudokuOfDifficulty(Difficulty.HARD);
     }
 }
