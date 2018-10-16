@@ -350,7 +350,9 @@ public class Sudoku {
     }
 
     /**
-     * isSolved
+     * Checks if the sudoku has been solved.
+     *
+     * @return true if the board has been solved.
      */
     public boolean isSolved() {
         for (int row = 0; row < ROW_SIZE; row++) {

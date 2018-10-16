@@ -574,6 +574,9 @@ public class SudokuTest {
         }
     }
 
+    /////////////////////////////////////////////////////
+    /// Create based on difficulty test
+    /////////////////////////////////////////////////////
     @Test
     public void canCreateEasySudoku() throws IOException {
         var sudoku = Sudoku.createSudokuOfDifficulty(Difficulty.EASY);
@@ -582,5 +585,44 @@ public class SudokuTest {
     @Test
     public void canCreateHardSudoku() throws IOException {
         var sudoku = Sudoku.createSudokuOfDifficulty(Difficulty.HARD);
+    }
+
+    //////////////////////////////////////////////////////
+    /// Is Solved test
+    //////////////////////////////////////////////////////
+    @Test
+    public void isSolvedWhenComplete() {
+       var finishedSoduku = "[" +
+               "[9, 6, 4, 2, 5, 7, 8, 3, 1,],\n" +
+               "[1, 5, 3, 9, 8, 4, 6, 7, 2,],\n" +
+               "[7, 8, 2, 6, 1, 3, 5, 4, 9,],\n" +
+               "[2, 9, 6, 3, 7, 8, 4, 1, 5,],\n" +
+               "[5, 1, 8, 4, 2, 9, 7, 6, 3,],\n" +
+               "[4, 3, 7, 5, 6, 1, 9, 2, 8,],\n" +
+               "[6, 4, 9, 8, 3, 2, 1, 5, 7,],\n" +
+               "[8, 2, 1, 7, 4, 5, 3, 9, 6,],\n" +
+               "[3, 7, 5, 1, 9, 6, 2, 8, 4,],\n" +
+               "]";
+
+       var sudoku = Sudoku.loadSudokuFromJson(finishedSoduku);
+       assertTrue(sudoku.isSolved());
+    }
+
+    @Test
+    public void isNotSolvedWhenIncomplete() {
+       var incompleteSudoku = "[" +
+               "[9, 6, 4, 2, 5, 7, 8, 3, 1,],\n" +
+               "[1, 5, 3, 9, 8, 4, 6, 7, 2,],\n" +
+               "[7, 8, 2, 6, 1, 3, 5, 4, 9,],\n" +
+               "[2, 9, 6, 3, 7, 8, 4, 1, 5,],\n" +
+               "[5, 1, 8, 4, 2, 9, 7, 6, 3,],\n" +
+               "[4, 3, 7, 5, 6, 1, 9, 2, 8,],\n" +
+               "[6, 4, 9, 8, 3, 2, 1, 5, 7,],\n" +
+               "[8, 2, 1, 7, 4, 5, 3, 9, 6,],\n" +
+               "[3, 7, 5, 1, 9, 6, 2, 8, -1,],\n" +
+               "]";
+
+       var sudoku = Sudoku.loadSudokuFromJson(incompleteSudoku);
+       assertTrue(!sudoku.isSolved());
     }
 }
