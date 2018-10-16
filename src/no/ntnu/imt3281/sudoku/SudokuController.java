@@ -326,13 +326,14 @@ public class SudokuController {
      * @param outSudoku
      * @param outBadGrid
      */
-    static void addNewvalToSudoku(String newval, int row, int col, Sudoku outSudoku, ArrayList<ArrayList<Integer>> outBadGrid) {
+    static void addNewvalToSudoku(String newval, int row, int col, Sudoku outSudoku,
+            ArrayList<ArrayList<Integer>> outBadGrid) {
         if (outSudoku.isNumberLocked(row, col)) {
             return;
             // ... do nothing
         }
 
-        if (newval.equals("")) {
+        if ("".equals(newval)) {
             outSudoku.setElement(row, col, Sudoku.EMPTY_CELL);
             outBadGrid.get(row).set(col, Sudoku.EMPTY_CELL);
             return;
@@ -452,7 +453,7 @@ public class SudokuController {
     }
 
     /**
-     * @param  outTextGrid
+     * @param outTextGrid
      */
     static void resetRenderState(ArrayList<ArrayList<TextField>> outTextGrid) {
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
