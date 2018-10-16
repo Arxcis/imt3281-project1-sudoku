@@ -276,9 +276,8 @@ public class Sudoku {
             if (filepath.toString().endsWith(".json")) {
                 return parseSudokuFromJson(lines);
             }
-            else {
-                return parseSudokuFromString(lines);
-            }
+
+            return parseSudokuFromString(lines);
         }
     }
 
