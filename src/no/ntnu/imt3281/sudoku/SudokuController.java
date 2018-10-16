@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -174,16 +175,19 @@ public class SudokuController {
 
         try {
             mSudoku = Sudoku.loadSudokuFromFile(file.toPath());
-            mSudoku.lockNumbers();
-            mBadGrid = SudokuController.makeBadGrid();
-
-            this.render();
-
         } catch (InvalidSudokuFileException e) {
-            // ... TODO handle file not valid
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.invalid.file"), file.toPath().toString());
+            return;
         } catch (IOException e) {
-            // ... TODO handle file not success
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.generic.ioexception"),
+                    file.toPath().toString());
+            return;
         }
+
+        mSudoku.lockNumbers();
+        mBadGrid = SudokuController.makeBadGrid();
+
+        this.render();
     }
 
     /**
@@ -204,7 +208,9 @@ public class SudokuController {
             Sudoku.saveSudokuToFile(mSudoku, file.toPath());
 
         } catch (IOException e) {
-            // ... TODO handle file not success
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.generic.ioexception"),
+                    file.toPath().toString());
+            return;
         }
     }
 
@@ -299,9 +305,24 @@ public class SudokuController {
     }
 
     /**
-     * @param newval latest user input
-     * @param row    sudoku row index
-     * @param col    sudoku column index
+     * Creates a popup error that is showed to the user with the supplied header
+     * text and message.
+     *
+     * @param header  The header of the message.
+     * @param message The content of the message.
+     */
+    static void reportErrorToUser(String header, String message) {
+        var alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(LanguageBundler.getBundle().getString("error") + "!");
+        alert.setHeaderText(header);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    /**
+     * @param newval     latest user input
+     * @param row        sudoku row index
+     * @param col        sudoku column index
      * @param outSudoku
      * @param outBadGrid
      */
