@@ -142,7 +142,7 @@ public class SudokuController {
      */
     @FXML
     void onClickExit(ActionEvent event) {
-        System.out.println("OnClickExit");
+        mStage.close();
     }
 
     /**
