@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -290,6 +291,15 @@ public class SudokuController {
         SudokuController.renderBadNumbers(mBadGrid, mTextGrid);
         if (mSudoku.isSolved()) {
             SudokuController.renderSolved(mTextGrid);
+
+            // Give output to user that they have solved the sudoku
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setGraphic(null);
+            alert.setTitle(LanguageBundler.getBundle().getString("congratulations") + "!");
+            alert.setHeaderText(LanguageBundler.getBundle().getString("congratulations") + "!");
+            alert.setContentText(LanguageBundler.getBundle().getString("solved.it") + "!");
+            alert.showAndWait();
+
         }
         mIsRendering.set(false);
     }
