@@ -165,7 +165,7 @@ public class SudokuController {
      */
     @FXML
     void onClickLoad(ActionEvent event) {
-        mFileChooser.setTitle("Load Game");
+        mFileChooser.setTitle(LanguageBundler.getBundle().getString("load"));
 
         File file = mFileChooser.showOpenDialog(mStage);
         if (file == null) {
@@ -197,7 +197,7 @@ public class SudokuController {
      */
     @FXML
     void onClickSave(ActionEvent event) {
-        mFileChooser.setTitle("Save Game");
+        mFileChooser.setTitle(LanguageBundler.getBundle().getString("save"));
 
         File file = mFileChooser.showSaveDialog(mStage);
         if (file == null) {
