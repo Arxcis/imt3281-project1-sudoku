@@ -20,22 +20,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import no.ntnu.imt3281.language.LanguageBundler;
 
+/**
+ * SudokuController is responsible for the UI management of the sudoku game.
+ */
 public class SudokuController {
-    /**
-     * Load and build a scene from an FXML document
-     *
-     * @return fxml scene
-     */
-    public static Scene loadScene() throws IOException {
-        final URL fxml = SudokuController.class.getResource("View.fxml");
-        final Parent root = FXMLLoader.load(fxml, LanguageBundler.getBundle());
-
-        mScene = new Scene(root);
-        mScene.getStylesheets().add(SudokuController.class.getResource("View.css").toString());
-
-        return mScene;
-    }
-
     /**
      * fxml id
      */
@@ -125,6 +113,22 @@ public class SudokuController {
      * solved
      */
     static PseudoClass mCSSSolved = PseudoClass.getPseudoClass("solved");
+
+    /**
+     * Load and build a scene from an FXML document
+     *
+     * @exception IOException Throws IOException upon IO errors.
+     * @return fxml scene
+     */
+    public static Scene loadScene() throws IOException {
+        final URL fxml = SudokuController.class.getResource("View.fxml");
+        final Parent root = FXMLLoader.load(fxml, LanguageBundler.getBundle());
+
+        mScene = new Scene(root);
+        mScene.getStylesheets().add(SudokuController.class.getResource("View.css").toString());
+
+        return mScene;
+    }
 
     /**
      * setStage
