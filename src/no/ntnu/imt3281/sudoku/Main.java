@@ -12,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-
 import no.ntnu.imt3281.language.LanguageBundler;
 
 public class Main extends Application {
@@ -26,7 +25,7 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-        
+
         LanguageBundler.init();
         Scene scene = null;
         scene = SudokuController.loadScene();
@@ -43,9 +42,13 @@ public class Main extends Application {
                 }
             }
         });
+
+
     }
 
     /**
+     * Overriden stop function that properly shuts down the background threads.
+     * @see https://bitbucket.org/jonasjso/prosjekt-1-imt3281-h2018/issues/34/background-thread-leaks-every-time
      * @see https://stackoverflow.com/a/46060236 - 13.09.18
      */
     @Override
