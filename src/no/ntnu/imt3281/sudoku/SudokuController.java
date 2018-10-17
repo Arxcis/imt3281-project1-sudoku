@@ -300,6 +300,15 @@ public class SudokuController {
         SudokuController.renderBadNumbers(mBadGrid, mTextGrid);
         if (mSudoku.isSolved()) {
             SudokuController.renderSolved(mTextGrid);
+
+            // Give output to user that they have solved the sudoku
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setGraphic(null);
+            alert.setTitle(LanguageBundler.getBundle().getString("congratulations") + "!");
+            alert.setHeaderText(LanguageBundler.getBundle().getString("congratulations") + "!");
+            alert.setContentText(LanguageBundler.getBundle().getString("solved.it") + "!");
+            alert.showAndWait();
+
         }
         mIsRendering.set(false);
     }
