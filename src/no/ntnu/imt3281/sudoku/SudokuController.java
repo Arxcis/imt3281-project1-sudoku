@@ -25,33 +25,25 @@ import no.ntnu.imt3281.language.LanguageBundler;
  * SudokuController is responsible for the UI management of the sudoku game.
  */
 public class SudokuController {
-    /**
-     * fxml id
-     */
-    @FXML
-    Button mBtnNewGame;
 
-    /**
-     * fxml id
-     */
-    @FXML
-    Button mBtnSave;
-
-    /**
-     * fxml id
-     */
-    @FXML
-    Button mBtnLoad;
-
-    /**
-     * fxml id
-     */
     @FXML
     Button mBtnExit;
 
-    /**
-     * fxml id
-     */
+    @FXML
+    Button mBtnNewGame;
+
+    @FXML
+    Button mBtnSave;
+
+    @FXML
+    Button mBtnLoad;
+
+    @FXML
+    Button mBtnLock;
+
+    @FXML
+    Button mBtnUnlock;
+
     @FXML
     GridPane mGridParent;
 
