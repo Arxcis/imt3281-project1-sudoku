@@ -147,15 +147,40 @@ public class SudokuController {
     }
 
     /**
-     * fxml event
+     * Button handler. Creates a random new game of easy difficulty, and loads 
+     * it into SudokuController and re-renders the scene.
+     *
+     * @param event fxml event object not used
      */
     @FXML
-    void onClickNewGame(ActionEvent event) {
+    void onClickNewEasyGame(ActionEvent event) {
 
-        mScene.getStylesheets().clear();
-        mScene.getStylesheets().add(this.getClass().getResource("View.css").toString());
+        try {
+            mSudoku = Sudoku.createSudokuOfDifficulty(Sudoku.Difficulty.EASY);
+        } catch (IOException e) {
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.generic.ioexception"), "");
+            return;
+        }
+        mBadGrid = SudokuController.makeBadGrid();
+        this.render();
+    }
 
-        System.out.println("OnClickNewGame");
+    /**
+     * Button-handler, creates a random new game of hard difficulty, 
+     * loads it into SudokuController and re-renders the scene.
+     *
+     * @param event fxml event object not used
+     */
+    @FXML
+    void onClickNewHardGame(ActionEvent event) {
+        try {
+            mSudoku = Sudoku.createSudokuOfDifficulty(Sudoku.Difficulty.HARD);
+        } catch (IOException e) {
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.generic.ioexception"), "");
+            return;
+        }
+        mBadGrid = SudokuController.makeBadGrid();
+        this.render();
     }
 
     /**
