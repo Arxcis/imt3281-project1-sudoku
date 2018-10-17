@@ -288,7 +288,7 @@ public class SudokuController {
     }
 
     /**
-     * 
+     * Event handler for value changed in a single fxml textfield. Abort this handler early in case rendering is going on, to prevent infinite loop.
      *
      * @param newval latest user input
      * @param row    sudoku row index
