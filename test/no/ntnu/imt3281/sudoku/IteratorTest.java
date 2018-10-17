@@ -25,7 +25,7 @@ public class IteratorTest {
                 "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
                 "]";
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
         var it = board.iterator(RowIterator.class, 0);
         int counter = 1;
         while (it.hasNext()) {
@@ -48,7 +48,7 @@ public class IteratorTest {
                 "[9, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
                 "]";
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
         var it = board.iterator(ColumnIterator.class, 0);
         int counter = 1;
         while (it.hasNext()) {
@@ -71,7 +71,7 @@ public class IteratorTest {
                 "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
                 "]";
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
         var it = board.iterator(SubGridIterator.class, 0);
         int counter = 1;
         while (it.hasNext()) {
@@ -94,7 +94,7 @@ public class IteratorTest {
                 "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
                 "]";
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
         var it = board.iterator(SubGridIterator.class, 4);
         int counter = 1;
         while (it.hasNext()) {
@@ -121,7 +121,7 @@ public class IteratorTest {
                 "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
                 "]";
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
         var it = board.iterator(RowIterator.class, 0);
         int counter = 0;
         while (it.hasNext()) {
@@ -146,7 +146,7 @@ public class IteratorTest {
                 "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
                 "]";
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
         var it = board.iterator(ColumnIterator.class, 0);
         int counter = 0;
         while (it.hasNext()) {
@@ -174,7 +174,7 @@ public class IteratorTest {
         int[] rowIndices = {0, 0, 0, 1, 1, 1, 2, 2, 2};
         int[] colIndices = {0, 1, 2, 0, 1, 2, 0, 1, 2};
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
         var it = board.iterator(SubGridIterator.class, 0);
         int counter = 0;
         while (it.hasNext()) {
@@ -204,7 +204,7 @@ public class IteratorTest {
                 "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
                 "]";
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
         board.iterator(Sudoku.class, 0);
     }
 
@@ -224,7 +224,7 @@ public class IteratorTest {
                 "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
                 "]";
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
 
         for (int i = 0; i < iterators.length; i++) {
             for (int j = 0; j < values.length; j++) {
@@ -253,7 +253,7 @@ public class IteratorTest {
                 "[-1, -1, -1, -1, -1, -1, -1, -1, -1]\n" +
                 "]";
 
-        var board = Sudoku.loadSudokuFromJson(map);
+        var board = Sudoku.parseSudokuFromJson(map);
 
         for (int i = 0; i < iterators.length; i++) {
             var it = board.iterator(iterators[i], 0);

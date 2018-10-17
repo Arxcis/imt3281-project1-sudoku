@@ -175,7 +175,7 @@ public class SudokuController {
 
         try {
             mSudoku = Sudoku.loadSudokuFromFile(file.toPath());
-        } catch (InvalidSudokuFileException e) {
+        } catch (InvalidSudokuBoardException e) {
             reportErrorToUser(LanguageBundler.getBundle().getString("error.invalid.file"), file.toPath().toString());
             return;
         } catch (IOException e) {

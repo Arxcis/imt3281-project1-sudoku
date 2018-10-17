@@ -32,6 +32,9 @@ public class SudokuTest {
         }
     }
 
+    ///////////////////////////////////////////////////////
+    /// Json Parsing tests
+    ///////////////////////////////////////////////////////
     /**
      * Tests if we can parse the sudoku supplied with the project.
      */
@@ -57,7 +60,7 @@ public class SudokuTest {
                 {-1, -1, -1, 4, 1, 9, -1, -1, 5},
                 {-1, -1, -1, -1, 8, -1, -1, 7, 9}};
 
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         for (int row = 0; row < desired.length; row++) {
             for (int col = 0; col < desired[row].length; col++) {
                 assertTrue(sudoku.getElement(row, col) == desired[row][col]);
@@ -95,12 +98,208 @@ public class SudokuTest {
                 {-1, 4, 9, -1, -1, 5, -1, -1, -1}
                 };
 
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         for (int row = 0; row < desired.length; row++) {
             for (int col = 0; col < desired[row].length; col++) {
                 assertTrue(sudoku.getElement(row, col) == desired[row][col]);
             }
         }
+    }
+
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void jsonParsingThrowsInvalidSudokuOnInvalidJSON() {
+        var string = "[\n" +
+                "[-1, -1, -1,  1, -1, -1,  5,  9, -1]\n" +
+                "[-1, -1,  1, -1,  9, -1, -1,  8,  4],\n" +
+                "[-1, -1,  8, -1,  3, -1,  7, -1,  6],\n" +
+                "[ 8,  3, -1,  9,  5, -1, -1, -1, -1],\n" +
+                "[-1,  5,  6,  3, -1,  1,  8,  7, -1],\n" +
+                "[-1, -1, -1, -1,  4,  6, -1,  3,  5],\n" +
+                "[ 1, -1,  3, -1,  7, -1,  4, -1, -1],\n" +
+                "[ 6,  8, -1, -1,  1, -1,  9, -1, -1],\n" +
+                "[-1,  4,  9, -1, -1,  5, -1, -1, -1]\n" +
+                "]";
+
+        Sudoku.parseSudokuFromJson(string);
+    }
+
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void jsonParsingThrowsOnIncompleteNumberOfRows() {
+        var string = "[\n" +
+                "[-1, -1, -1,  1, -1, -1,  5,  9, -1],\n" +
+                "[-1, -1,  1, -1,  9, -1, -1,  8,  4],\n" +
+                "[-1, -1,  8, -1,  3, -1,  7, -1,  6],\n" +
+                "[ 8,  3, -1,  9,  5, -1, -1, -1, -1],\n" +
+                "[-1,  5,  6,  3, -1,  1,  8,  7, -1],\n" +
+                "[-1, -1, -1, -1,  4,  6, -1,  3,  5],\n" +
+                "[ 1, -1,  3, -1,  7, -1,  4, -1, -1],\n" +
+                "[ 6,  8, -1, -1,  1, -1,  9, -1, -1]\n" +
+                "]";
+
+        Sudoku.parseSudokuFromJson(string);
+    }
+
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void jsonParsingThrowsOnIncompleteNumberOfColumns() {
+        var string = "[\n" +
+                "[-1, -1, -1,  1, -1, -1,  5,  9],\n" +
+                "[-1, -1,  1, -1,  9, -1, -1,  8],\n" +
+                "[-1, -1,  8, -1,  3, -1,  7, -1],\n" +
+                "[ 8,  3, -1,  9,  5, -1, -1, -1],\n" +
+                "[-1,  5,  6,  3, -1,  1,  8,  7],\n" +
+                "[-1, -1, -1, -1,  4,  6, -1,  3],\n" +
+                "[ 1, -1,  3, -1,  7, -1,  4, -1],\n" +
+                "[ 6,  8, -1, -1,  1, -1,  9, -1],\n" +
+                "[-1,  4,  9, -1, -1,  5, -1, -1]\n" +
+                "]";
+
+        Sudoku.parseSudokuFromJson(string);
+    }
+
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void jsonParsingThrowsOnTooManyColumns() {
+        var string = "[\n" +
+                "[-1, -1, -1,  1, -1, -1,  5,  9, -1, -1],\n" +
+                "[-1, -1,  1, -1,  9, -1, -1,  8,  4, -1],\n" +
+                "[-1, -1,  8, -1,  3, -1,  7, -1,  6, -1],\n" +
+                "[ 8,  3, -1,  9,  5, -1, -1, -1, -1, -1],\n" +
+                "[-1,  5,  6,  3, -1,  1,  8,  7, -1, -1],\n" +
+                "[-1, -1, -1, -1,  4,  6, -1,  3,  5, -1],\n" +
+                "[ 1, -1,  3, -1,  7, -1,  4, -1, -1, -1],\n" +
+                "[ 6,  8, -1, -1,  1, -1,  9, -1, -1, -1],\n" +
+                "[-1,  4,  9, -1, -1,  5, -1, -1, -1, -1]\n" +
+                "]";
+
+        Sudoku.parseSudokuFromJson(string);
+
+    }
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void jsonParsingThrowsOnTooManyRows() {
+        var string = "[\n" +
+                "[-1, -1, -1,  1, -1, -1,  5,  9, -1],\n" +
+                "[-1, -1,  1, -1,  9, -1, -1,  8,  4],\n" +
+                "[-1, -1,  8, -1,  3, -1,  7, -1,  6],\n" +
+                "[ 8,  3, -1,  9,  5, -1, -1, -1, -1],\n" +
+                "[-1,  5,  6,  3, -1,  1,  8,  7, -1],\n" +
+                "[-1, -1, -1, -1,  4,  6, -1,  3,  5],\n" +
+                "[ 1, -1,  3, -1,  7, -1,  4, -1, -1],\n" +
+                "[ 6,  8, -1, -1,  1, -1,  9, -1, -1],\n" +
+                "[-1,  4,  9, -1, -1,  5, -1, -1, -1],\n" +
+                "[-1, -1, -1, -1, -1, -1, -1, -1, -1],\n" +
+                "]";
+
+        Sudoku.parseSudokuFromJson(string);
+    }
+
+    ///////////////////////////////////////////////////////
+    /// String Parsing tests
+    ///////////////////////////////////////////////////////
+    @Test
+    public void stringParsesSuccessfully() throws IOException {
+        var string = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, -1 0, \n"
+                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, \n"
+                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
+                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, \n"
+                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, \n"
+                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, \n"
+                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, \n"
+                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, \n"
+                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, ";
+
+        var sudoku = Sudoku.parseSudokuFromString(string);
+
+        int[] desired = {5, 1, 3, 1, 4, 0, -1, 0, 7, 1, -1, 0, -1, 0, -1, 0, -1, 0,
+                6, 1, -1, 0, -1, 0, 1, 1, 9, 1, 5, 1, -1, 0, -1, 0, -1, 0,
+                -1, 0, 9, 1, 8, 1, -1, 0, -1, 0, -1, 0, -1, 0, 6, 1, -1, 0,
+                8, 1, -1, 0, -1, 0, -1, 0, 6, 1, -1, 0, -1, 0, -1, 0, 3, 1,
+                4, 1, -1, 0, -1, 0, 8, 1, -1, 0, 3, 1, -1, 0, -1, 0, 1, 1,
+                7, 1, -1, 0, -1, 0, -1, 0, 2, 1, -1, 0, -1, 0, -1, 0, 6, 1,
+                -1, 0, 6, 1, -1, 0, -1, 0, -1, 0, -1, 0, 2, 1, 8, 1, -1, 0,
+                -1, 0, -1, 0, -1, 0, 4, 1, 1, 1, 9, 1, -1, 0, -1, 0, 5, 1,
+                -1, 0, -1, 0, -1, 0, -1, 0, 8, 1, -1, 0, -1, 0, 7, 1, 9, 1};
+
+        for (int row = 0, i = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                assertTrue(sudoku.getElement(row, col) == desired[i++]);
+                assertTrue(sudoku.isNumberLocked(row, col) == (desired[i++] == 1 ? true : false));
+            }
+        }
+    }
+
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void stringParsingThrowsOnIncompleteNumberOfRows() throws IOException {
+        var string = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, -1 0, \n"
+                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, \n"
+                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
+                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, \n"
+                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, \n"
+                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, \n"
+                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, \n"
+                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, \n";
+
+        Sudoku.parseSudokuFromString(string);
+
+    }
+
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void stringParsingThrowsOnIncompleteNumberOfColumns() throws IOException {
+        var string = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, \n"
+                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, \n"
+                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, \n"
+                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, \n"
+                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, \n"
+                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, \n"
+                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, \n"
+                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, \n"
+                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, ";
+
+        Sudoku.parseSudokuFromString(string);
+    }
+
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void stringParsingThrowsOnTooManyColumns() throws IOException {
+        var string = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, -1 0, -1 0, \n"
+                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, -1 0, \n"
+                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, \n"
+                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, -1 0, \n"
+                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, -1 0, \n"
+                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
+                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, -1 0, \n"
+                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, -1 0, \n"
+                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, -1 0, ";
+
+        Sudoku.parseSudokuFromString(string);
+    }
+
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void stringParsingThrowsOnTooManyRows() throws IOException {
+        var string = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, -1 0, \n"
+                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, \n"
+                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
+                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, \n"
+                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, \n"
+                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, \n"
+                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, \n"
+                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, \n"
+                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, \n"
+                + "-1 0, -1 0, -1 0, -1 0, -1 0, -1 0, -1 0, -1 0, -1 0,";
+
+        Sudoku.parseSudokuFromString(string);
+    }
+
+    @Test(expected = InvalidSudokuBoardException.class)
+    public void stringParsingThrowsOnLockedEmptyCells() throws IOException {
+        var string = "5 1, 3 1, 4 0, -1 1, 7 1, -1 0, -1 0, -1 0, -1 0, \n"
+                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, \n"
+                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
+                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, \n"
+                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, \n"
+                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, \n"
+                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, \n"
+                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, \n"
+                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, ";
+
+        Sudoku.parseSudokuFromString(string);
     }
 
     ///////////////////////////////////////////////////////
@@ -199,7 +398,7 @@ public class SudokuTest {
                 "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
                 "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         sudoku.lockNumbers();
         sudoku.addNumber(0, 0, 1);
     }
@@ -216,7 +415,7 @@ public class SudokuTest {
                 "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
                 "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         sudoku.lockNumbers();
         for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
             for (int col = 0; col < Sudoku.COL_SIZE; col++) {
@@ -250,7 +449,7 @@ public class SudokuTest {
                 "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
                 "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         sudoku.lockNumbers();
         sudoku.addNumber(0, 2, 4);
     }
@@ -267,7 +466,7 @@ public class SudokuTest {
                 "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
                 "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         sudoku.lockNumbers();
         sudoku.unlockNumbers();
         for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
@@ -296,7 +495,7 @@ public class SudokuTest {
                 "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
                 "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         sudoku.lockNumbers();
         sudoku.addNumber(0, 2, 4);
 
@@ -319,6 +518,43 @@ public class SudokuTest {
             while ((line = reader.readLine()) != null) {
                 var trimmed = line.trim();
                 assertTrue(trimmed.compareTo(desiredText[count++]) == 0);
+            }
+        }
+    }
+
+    @Test
+    public void loadsJsonFileSuccessfully() throws IOException {
+        var fileContents = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" +
+                "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n" +
+                "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" +
+                "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n" +
+                "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" +
+                "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n" +
+                "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" +
+                "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
+                "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var file = folder.newFile("test.json");
+        try (final var writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(fileContents);
+        }
+
+        var sudoku = Sudoku.loadSudokuFromFile(file.toPath());
+
+        int[] desired = {5, 3, -1, -1, 7, -1, -1, -1, -1,
+                6, -1, -1, 1, 9, 5, -1, -1, -1,
+                -1, 9, 8, -1, -1, -1, -1, 6, -1,
+                8, -1, -1, -1, 6, -1, -1, -1, 3,
+                4, -1, -1, 8, -1, 3, -1, -1, 1,
+                7, -1, -1, -1, 2, -1, -1, -1, 6,
+                -1, 6, -1, -1, -1, -1, 2, 8, -1,
+                -1, -1, -1, 4, 1, 9, -1, -1, 5,
+                -1, -1, -1, -1, 8, -1, -1, 7, 9,
+                };
+
+        for (int row = 0, i = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                assertTrue(sudoku.getElement(row, col) == desired[i++]);
             }
         }
     }
@@ -360,105 +596,6 @@ public class SudokuTest {
         }
     }
 
-    @Test(expected = InvalidSudokuFileException.class)
-    public void loadsFileThrowsOnIncompleteNumberOfRows() throws IOException {
-        var fileContents = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, -1 0, \n"
-                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, \n"
-                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
-                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, \n"
-                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, \n"
-                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, \n"
-                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, \n"
-                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, \n";
-
-        var file = folder.newFile();
-        try (final var writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(fileContents);
-        }
-
-        Sudoku.loadSudokuFromFile(file.toPath());
-    }
-
-    @Test(expected = InvalidSudokuFileException.class)
-    public void loadsFileThrowsOnIncompleteNumberOfColumns() throws IOException {
-        var fileContents = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, \n"
-                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, \n"
-                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, \n"
-                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, \n"
-                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, \n"
-                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, \n"
-                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, \n"
-                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, \n"
-                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, ";
-
-        var file = folder.newFile();
-        try (final var writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(fileContents);
-        }
-
-        Sudoku.loadSudokuFromFile(file.toPath());
-    }
-
-    @Test(expected = InvalidSudokuFileException.class)
-    public void loadsFileThrowsOnTooManyColumns() throws IOException {
-        var fileContents = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, -1 0, -1 0, \n"
-                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, -1 0, \n"
-                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, \n"
-                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, -1 0, \n"
-                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, -1 0, \n"
-                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
-                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, -1 0, \n"
-                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, -1 0, \n"
-                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, -1 0, ";
-
-        var file = folder.newFile();
-        try (final var writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(fileContents);
-        }
-
-        Sudoku.loadSudokuFromFile(file.toPath());
-    }
-
-    @Test(expected = InvalidSudokuFileException.class)
-    public void loadsFileThrowsOnTooManyRows() throws IOException {
-        var fileContents = "5 1, 3 1, 4 0, -1 0, 7 1, -1 0, -1 0, -1 0, -1 0, \n"
-                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, \n"
-                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
-                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, \n"
-                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, \n"
-                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, \n"
-                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, \n"
-                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, \n"
-                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, \n"
-                + "-1 0, -1 0, -1 0, -1 0, -1 0, -1 0, -1 0, -1 0, -1 0,";
-
-        var file = folder.newFile();
-        try (final var writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(fileContents);
-        }
-
-        Sudoku.loadSudokuFromFile(file.toPath());
-    }
-
-    @Test(expected = InvalidSudokuFileException.class)
-    public void loadsFileThrowsOnLockedEmptyCells() throws IOException {
-        var fileContents = "5 1, 3 1, 4 0, -1 1, 7 1, -1 0, -1 0, -1 0, -1 0, \n"
-                + "6 1, -1 0, -1 0, 1 1, 9 1, 5 1, -1 0, -1 0, -1 0, \n"
-                + "-1 0, 9 1, 8 1, -1 0, -1 0, -1 0, -1 0, 6 1, -1 0, \n"
-                + "8 1, -1 0, -1 0, -1 0, 6 1, -1 0, -1 0, -1 0, 3 1, \n"
-                + "4 1, -1 0, -1 0, 8 1, -1 0, 3 1, -1 0, -1 0, 1 1, \n"
-                + "7 1, -1 0, -1 0, -1 0, 2 1, -1 0, -1 0, -1 0, 6 1, \n"
-                + "-1 0, 6 1, -1 0, -1 0, -1 0, -1 0, 2 1, 8 1, -1 0, \n"
-                + "-1 0, -1 0, -1 0, 4 1, 1 1, 9 1, -1 0, -1 0, 5 1, \n"
-                + "-1 0, -1 0, -1 0, -1 0, 8 1, -1 0, -1 0, 7 1, 9 1, ";
-
-        var file = folder.newFile();
-        try (final var writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(fileContents);
-        }
-
-        Sudoku.loadSudokuFromFile(file.toPath());
-    }
 
     ///////////////////////////////////////////////////////
     /// Change all elements tests
@@ -485,8 +622,8 @@ public class SudokuTest {
                      "[-1, -1, -1, -1,  8, -1, -1,  7,  9]" +
                      "]";
 
-        var originalBoard = Sudoku.loadSudokuFromJson(string);
-        var newBoard = Sudoku.loadSudokuFromJson(string);
+        var originalBoard = Sudoku.parseSudokuFromJson(string);
+        var newBoard = Sudoku.parseSudokuFromJson(string);
         newBoard.randomizeAllExistingElements();
 
         // Using -2 to indicate value not being set, as we can end up with 0 as legal
@@ -527,8 +664,8 @@ public class SudokuTest {
                 + "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" + "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n"
                 + "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
-        var originalBoard = Sudoku.loadSudokuFromJson(string);
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var originalBoard = Sudoku.parseSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         sudoku.flipBoard(Sudoku.Axis.HORIZONTAL);
 
         for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
@@ -546,8 +683,8 @@ public class SudokuTest {
                 + "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" + "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n"
                 + "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
-        var originalBoard = Sudoku.loadSudokuFromJson(string);
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var originalBoard = Sudoku.parseSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         sudoku.flipBoard(Sudoku.Axis.VERTICAL);
 
         for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
@@ -565,8 +702,8 @@ public class SudokuTest {
                 + "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" + "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n"
                 + "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
-        var originalBoard = Sudoku.loadSudokuFromJson(string);
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var originalBoard = Sudoku.parseSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         sudoku.flipBoard(Sudoku.Axis.DIAGONALSLASH);
 
         for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
@@ -585,8 +722,8 @@ public class SudokuTest {
                 + "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" + "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n"
                 + "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
 
-        var originalBoard = Sudoku.loadSudokuFromJson(string);
-        var sudoku = Sudoku.loadSudokuFromJson(string);
+        var originalBoard = Sudoku.parseSudokuFromJson(string);
+        var sudoku = Sudoku.parseSudokuFromJson(string);
         sudoku.flipBoard(Sudoku.Axis.DIAGONALBACKSLASH);
 
         for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
@@ -599,14 +736,19 @@ public class SudokuTest {
     /////////////////////////////////////////////////////
     /// Create based on difficulty test
     /////////////////////////////////////////////////////
+    /*
+     * These tests don't check if we get a proper Sudoku board, as it is randomized
+     * etc it is a bit hard to check. So we are just checking that they are not
+     * throwing exceptions because they miss the files.
+     */
     @Test
     public void canCreateEasySudoku() throws IOException {
-        var sudoku = Sudoku.createSudokuOfDifficulty(Difficulty.EASY);
+        Sudoku.createSudokuOfDifficulty(Difficulty.EASY);
     }
 
     @Test
     public void canCreateHardSudoku() throws IOException {
-        var sudoku = Sudoku.createSudokuOfDifficulty(Difficulty.HARD);
+        Sudoku.createSudokuOfDifficulty(Difficulty.HARD);
     }
 
     //////////////////////////////////////////////////////
@@ -626,7 +768,7 @@ public class SudokuTest {
                "[3, 7, 5, 1, 9, 6, 2, 8, 4,],\n" +
                "]";
 
-       var sudoku = Sudoku.loadSudokuFromJson(finishedSoduku);
+       var sudoku = Sudoku.parseSudokuFromJson(finishedSoduku);
        assertTrue(sudoku.isSolved());
     }
 
@@ -644,7 +786,7 @@ public class SudokuTest {
                "[3, 7, 5, 1, 9, 6, 2, 8, -1,],\n" +
                "]";
 
-       var sudoku = Sudoku.loadSudokuFromJson(incompleteSudoku);
+       var sudoku = Sudoku.parseSudokuFromJson(incompleteSudoku);
        assertTrue(!sudoku.isSolved());
     }
 }
