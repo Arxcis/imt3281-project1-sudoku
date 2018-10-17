@@ -14,7 +14,8 @@
       <ToolBar prefHeight="40.0" prefWidth="200.0">
         <items>
             <Button fx:id="mBtnExit" mnemonicParsing="false" onAction="#onClickExit" text="%exit" />
-            <Button fx:id="mBtnNewGame" mnemonicParsing="false" onAction="#onClickNewGame" text="%new.game" />
+            <Button fx:id="mBtnNewGame" mnemonicParsing="false" onAction="#onClickNewEasyGame" text="%new.easy.game" />
+            <Button fx:id="mBtnNewGame" mnemonicParsing="false" onAction="#onClickNewHardGame" text="%new.hard.game" />
             <Button fx:id="mBtnSave" mnemonicParsing="false" onAction="#onClickSave" text="%save" />
             <Button fx:id="mBtnLoad" mnemonicParsing="false" onAction="#onClickLoad" text="%load" />
             <Button fx:id="mBtnLock" mnemonicParsing="false" onAction="#onClickLock" text="%lock" />
