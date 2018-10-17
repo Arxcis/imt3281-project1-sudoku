@@ -21,22 +21,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import no.ntnu.imt3281.language.LanguageBundler;
 
+/**
+ * SudokuController is responsible for the UI management of the sudoku game.
+ */
 public class SudokuController {
-    /**
-     * Load and build a scene from an FXML document
-     *
-     * @return fxml scene
-     */
-    public static Scene loadScene() throws IOException {
-        final URL fxml = SudokuController.class.getResource("View.fxml");
-        final Parent root = FXMLLoader.load(fxml, LanguageBundler.getBundle());
-
-        mScene = new Scene(root);
-        mScene.getStylesheets().add(SudokuController.class.getResource("View.css").toString());
-
-        return mScene;
-    }
-
     /**
      * fxml id
      */
@@ -128,6 +116,22 @@ public class SudokuController {
     static PseudoClass mCSSSolved = PseudoClass.getPseudoClass("solved");
 
     /**
+     * Load and build a scene from an FXML document
+     *
+     * @exception IOException Throws IOException upon IO errors.
+     * @return fxml scene
+     */
+    public static Scene loadScene() throws IOException {
+        final URL fxml = SudokuController.class.getResource("View.fxml");
+        final Parent root = FXMLLoader.load(fxml, LanguageBundler.getBundle());
+
+        mScene = new Scene(root);
+        mScene.getStylesheets().add(SudokuController.class.getResource("View.css").toString());
+
+        return mScene;
+    }
+
+    /**
      * setStage
      */
     static void setStage(Stage stage) {
@@ -139,7 +143,7 @@ public class SudokuController {
      */
     @FXML
     void onClickExit(ActionEvent event) {
-        System.out.println("OnClickExit");
+        mStage.close();
     }
 
     /**
@@ -161,7 +165,7 @@ public class SudokuController {
      */
     @FXML
     void onClickLoad(ActionEvent event) {
-        mFileChooser.setTitle("Load Game");
+        mFileChooser.setTitle(LanguageBundler.getBundle().getString("load"));
 
         File file = mFileChooser.showOpenDialog(mStage);
         if (file == null) {
@@ -171,16 +175,19 @@ public class SudokuController {
 
         try {
             mSudoku = Sudoku.loadSudokuFromFile(file.toPath());
-            mSudoku.lockNumbers();
-            mBadGrid = SudokuController.makeBadGrid();
-
-            this.render();
-
         } catch (InvalidSudokuFileException e) {
-            // ... TODO handle file not valid
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.invalid.file"), file.toPath().toString());
+            return;
         } catch (IOException e) {
-            // ... TODO handle file not success
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.generic.ioexception"),
+                    file.toPath().toString());
+            return;
         }
+
+        mSudoku.lockNumbers();
+        mBadGrid = SudokuController.makeBadGrid();
+
+        this.render();
     }
 
     /**
@@ -190,7 +197,7 @@ public class SudokuController {
      */
     @FXML
     void onClickSave(ActionEvent event) {
-        mFileChooser.setTitle("Save Game");
+        mFileChooser.setTitle(LanguageBundler.getBundle().getString("save"));
 
         File file = mFileChooser.showSaveDialog(mStage);
         if (file == null) {
@@ -201,7 +208,9 @@ public class SudokuController {
             Sudoku.saveSudokuToFile(mSudoku, file.toPath());
 
         } catch (IOException e) {
-            // ... TODO handle file not success
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.generic.ioexception"),
+                    file.toPath().toString());
+            return;
         }
     }
 
@@ -305,19 +314,35 @@ public class SudokuController {
     }
 
     /**
-     * @param newval latest user input
-     * @param row    sudoku row index
-     * @param col    sudoku column index
+     * Creates a popup error that is showed to the user with the supplied header
+     * text and message.
+     *
+     * @param header  The header of the message.
+     * @param message The content of the message.
+     */
+    static void reportErrorToUser(String header, String message) {
+        var alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(LanguageBundler.getBundle().getString("error") + "!");
+        alert.setHeaderText(header);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    /**
+     * @param newval     latest user input
+     * @param row        sudoku row index
+     * @param col        sudoku column index
      * @param outSudoku
      * @param outBadGrid
      */
-    static void addNewvalToSudoku(String newval, int row, int col, Sudoku outSudoku, ArrayList<ArrayList<Integer>> outBadGrid) {
+    static void addNewvalToSudoku(String newval, int row, int col, Sudoku outSudoku,
+            ArrayList<ArrayList<Integer>> outBadGrid) {
         if (outSudoku.isNumberLocked(row, col)) {
             return;
             // ... do nothing
         }
 
-        if (newval.equals("")) {
+        if ("".equals(newval)) {
             outSudoku.setElement(row, col, Sudoku.EMPTY_CELL);
             outBadGrid.get(row).set(col, Sudoku.EMPTY_CELL);
             return;
@@ -437,7 +462,7 @@ public class SudokuController {
     }
 
     /**
-     * @param  outTextGrid
+     * @param outTextGrid
      */
     static void resetRenderState(ArrayList<ArrayList<TextField>> outTextGrid) {
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {

@@ -36,11 +36,11 @@
 }
 
 .cell:bad {
-    -fx-text-fill: #f44242;
+    -fx-background-color: #f44242;
 }
 
 .cell:locked {
-    -fx-text-fill: #4286f4;
+    -fx-background-color: #D3D3D3;
 }
 
 .cell:solved {

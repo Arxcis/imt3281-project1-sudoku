@@ -93,12 +93,10 @@ public class Sudoku {
         }
 
         /**
-         *
+         * Unlocks the cell.
          */
         private void unlock() {
-            if (mValue != EMPTY_CELL) {
-                mIsLocked = false;
-            }
+            mIsLocked = false;
         }
     }
 
@@ -328,7 +326,7 @@ public class Sudoku {
 
     /**
      * Locks all the numbers that has already been given a legal value, making it
-     * impossible to change them
+     * impossible to change them.
      */
     public void lockNumbers() {
         for (int row = 0; row < ROW_SIZE; row++) {
@@ -339,7 +337,7 @@ public class Sudoku {
     }
 
     /**
-     * unlockNumbers
+     * Unlocks all the numbers that has been locked.
      */
     public void unlockNumbers() {
         for (int row = 0; row < ROW_SIZE; row++) {
@@ -350,7 +348,9 @@ public class Sudoku {
     }
 
     /**
-     * isSolved
+     * Checks if the sudoku has been solved.
+     *
+     * @return true if the board has been solved.
      */
     public boolean isSolved() {
         for (int row = 0; row < ROW_SIZE; row++) {
