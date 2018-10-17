@@ -454,6 +454,28 @@ public class SudokuTest {
         sudoku.addNumber(0, 2, 4);
     }
 
+    @Test
+    public void allNumbersAreUnlockedOnUnlock() {
+        var string = "[[5, 3, -1, -1, 7, -1, -1, -1, -1],\n" +
+                "[6, -1, -1, 1, 9, 5, -1, -1, -1], \n" +
+                "[-1, 9, 8, -1, -1, -1, -1, 6, -1], \n" +
+                "[8, -1, -1, -1, 6, -1, -1, -1, 3], \n" +
+                "[4, -1, -1, 8, -1, 3, -1, -1, 1], \n" +
+                "[7, -1, -1, -1, 2, -1, -1, -1, 6], \n" +
+                "[-1, 6, -1, -1, -1, -1, 2, 8, -1], \n" +
+                "[-1, -1, -1, 4, 1, 9, -1, -1, 5], \n" +
+                "[-1, -1, -1, -1, 8, -1, -1, 7, 9]]";
+
+        var sudoku = Sudoku.parseSudokuFromJson(string);
+        sudoku.lockNumbers();
+        sudoku.unlockNumbers();
+        for (int row = 0; row < Sudoku.ROW_SIZE; row++) {
+            for (int col = 0; col < Sudoku.COL_SIZE; col++) {
+                assertTrue(sudoku.isNumberLocked(row, col) == false);
+            }
+        }
+    }
+
     ///////////////////////////////////////////////////////
     /// Saving and loading tests
     ///////////////////////////////////////////////////////
@@ -711,13 +733,60 @@ public class SudokuTest {
         }
     }
 
+    /////////////////////////////////////////////////////
+    /// Create based on difficulty test
+    /////////////////////////////////////////////////////
+    /*
+     * These tests don't check if we get a proper Sudoku board, as it is randomized
+     * etc it is a bit hard to check. So we are just checking that they are not
+     * throwing exceptions because they miss the files.
+     */
     @Test
     public void canCreateEasySudoku() throws IOException {
-        var sudoku = Sudoku.createSudokuOfDifficulty(Difficulty.EASY);
+        Sudoku.createSudokuOfDifficulty(Difficulty.EASY);
     }
 
     @Test
     public void canCreateHardSudoku() throws IOException {
-        var sudoku = Sudoku.createSudokuOfDifficulty(Difficulty.HARD);
+        Sudoku.createSudokuOfDifficulty(Difficulty.HARD);
+    }
+
+    //////////////////////////////////////////////////////
+    /// Is Solved test
+    //////////////////////////////////////////////////////
+    @Test
+    public void isSolvedWhenComplete() {
+       var finishedSoduku = "[" +
+               "[9, 6, 4, 2, 5, 7, 8, 3, 1,],\n" +
+               "[1, 5, 3, 9, 8, 4, 6, 7, 2,],\n" +
+               "[7, 8, 2, 6, 1, 3, 5, 4, 9,],\n" +
+               "[2, 9, 6, 3, 7, 8, 4, 1, 5,],\n" +
+               "[5, 1, 8, 4, 2, 9, 7, 6, 3,],\n" +
+               "[4, 3, 7, 5, 6, 1, 9, 2, 8,],\n" +
+               "[6, 4, 9, 8, 3, 2, 1, 5, 7,],\n" +
+               "[8, 2, 1, 7, 4, 5, 3, 9, 6,],\n" +
+               "[3, 7, 5, 1, 9, 6, 2, 8, 4,],\n" +
+               "]";
+
+       var sudoku = Sudoku.parseSudokuFromJson(finishedSoduku);
+       assertTrue(sudoku.isSolved());
+    }
+
+    @Test
+    public void isNotSolvedWhenIncomplete() {
+       var incompleteSudoku = "[" +
+               "[9, 6, 4, 2, 5, 7, 8, 3, 1,],\n" +
+               "[1, 5, 3, 9, 8, 4, 6, 7, 2,],\n" +
+               "[7, 8, 2, 6, 1, 3, 5, 4, 9,],\n" +
+               "[2, 9, 6, 3, 7, 8, 4, 1, 5,],\n" +
+               "[5, 1, 8, 4, 2, 9, 7, 6, 3,],\n" +
+               "[4, 3, 7, 5, 6, 1, 9, 2, 8,],\n" +
+               "[6, 4, 9, 8, 3, 2, 1, 5, 7,],\n" +
+               "[8, 2, 1, 7, 4, 5, 3, 9, 6,],\n" +
+               "[3, 7, 5, 1, 9, 6, 2, 8, -1,],\n" +
+               "]";
+
+       var sudoku = Sudoku.parseSudokuFromJson(incompleteSudoku);
+       assertTrue(!sudoku.isSolved());
     }
 }
