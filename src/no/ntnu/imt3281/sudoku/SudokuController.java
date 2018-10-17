@@ -139,7 +139,7 @@ public class SudokuController {
     }
 
     /**
-     * Button handler. Creates a random new game of easy difficulty, and loads 
+     * Button handler. Creates a random new game of easy difficulty, and loads
      * it into SudokuController and re-renders the scene.
      *
      * @param event fxml event object not used
@@ -158,7 +158,7 @@ public class SudokuController {
     }
 
     /**
-     * Button-handler, creates a random new game of hard difficulty, 
+     * Button-handler, creates a random new game of hard difficulty,
      * loads it into SudokuController and re-renders the scene.
      *
      * @param event fxml event object not used
@@ -176,7 +176,8 @@ public class SudokuController {
     }
 
     /**
-     * fxml event
+     * Present load file dialog to user. If user cancel do nothing, else try to load
+     * file. If no success give error message to user. Re-renders UI.
      *
      * @see https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm 01.09.18
      */
@@ -208,7 +209,8 @@ public class SudokuController {
     }
 
     /**
-     * fxml event
+     * Present save file dialog to the user. If user cancel do nothing, else try to
+     * save file. Give error message if the saving failed. Re-renders UI.
      *
      * @see https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm 01.09.18
      */
@@ -288,7 +290,8 @@ public class SudokuController {
     }
 
     /**
-     * Parse, Validate input. Clear cell if not valid
+     * Event handler for value changed in a single fxml textfield. Abort this
+     * handler early in case rendering is going on, to prevent infinite loop.
      *
      * @param newval latest user input
      * @param row    sudoku row index
@@ -307,7 +310,12 @@ public class SudokuController {
     }
 
     /**
-     * render
+     * Render scene with updated game state + bad numbers state.
+     * If game is completed, display victory to the user.
+     * The renderer changes the state of fxml, which triggers
+     * onChange callback functions, which may trigger more render calls.
+     * This will cause an infinite callback-render loop. This is why we
+     * lock guard this function using the mIsRendering flag.
      */
     void render() {
         mIsRendering.set(true);
@@ -347,11 +355,14 @@ public class SudokuController {
     }
 
     /**
-     * @param newval     latest user input
-     * @param row        sudoku row index
-     * @param col        sudoku column index
-     * @param outSudoku
-     * @param outBadGrid
+     * Try add number to sudoku game state. If rejected, maybe keep the number as a
+     * bad number, otherwise throw number away and continue game.
+     *
+     * @param newval     latest user input from a cell
+     * @param row        cell row index
+     * @param col        cell column index
+     * @param outSudoku  sudoku game state
+     * @param outBadGrid 9x9 bad numbers game state.
      */
     static void addNewvalToSudoku(String newval, int row, int col, Sudoku outSudoku,
             ArrayList<ArrayList<Integer>> outBadGrid) {
@@ -390,7 +401,7 @@ public class SudokuController {
     }
 
     /**
-     * @return 2d array of fxml textField
+     * @return 9x9 array of fxml textField
      */
     static ArrayList<ArrayList<TextField>> makeTextGrid() {
         var textGrid = new ArrayList<ArrayList<TextField>>();
@@ -409,7 +420,7 @@ public class SudokuController {
     }
 
     /**
-     * @return empty grid of bad numbers
+     * @return 9x9 array holding sudoku bad numbers state
      */
     static ArrayList<ArrayList<Integer>> makeBadGrid() {
         var badGrid = new ArrayList<ArrayList<Integer>>();
@@ -426,8 +437,11 @@ public class SudokuController {
     }
 
     /**
-     * @param textGrid
-     * @param outParent
+     * Binding an 9x9 array of fxml textfields to a parent fxml grid pane.
+     * The parent serves as a root element for all the text fields in the fxml scene.
+     *
+     * @param textGrid 9x9 array of fxml textfields
+     * @param outParent fxml grid pane, parent of all textfields.
      */
     static void bindTextGridToParent(ArrayList<ArrayList<TextField>> textGrid, GridPane outParent) {
 
@@ -457,8 +471,10 @@ public class SudokuController {
     }
 
     /**
-     * @param outSudoku
-     * @param outBadGrid
+     * Retry adding bad numbers to the sudoku game state.
+     *
+     * @param outSudoku  sudoku game state
+     * @param outBadGrid bad numbers state
      */
     static void retryBadNumbers(Sudoku outSudoku, ArrayList<ArrayList<Integer>> outBadGrid) {
 
@@ -480,7 +496,9 @@ public class SudokuController {
     }
 
     /**
-     * @param outTextGrid
+     * Set all CSS classes to their initial state.
+     *
+     * @param outTextGrid 9x9 array of fxml textfields
      */
     static void resetRenderState(ArrayList<ArrayList<TextField>> outTextGrid) {
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
@@ -494,8 +512,10 @@ public class SudokuController {
     }
 
     /**
-     * @param sudoku
-     * @param outTextGrid
+     * Map valid numbers to UI
+     *
+     * @param sudoku Sudoku game state
+     * @param outTextGrid 9x9 fxml textfields
      */
     static void renderValidNumbers(Sudoku sudoku, ArrayList<ArrayList<TextField>> outTextGrid) {
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
@@ -518,8 +538,10 @@ public class SudokuController {
     }
 
     /**
-     * @param badGrid
-     * @param outTextGrid
+     * Map bad numbers to UI. Numbers not accepted by the soduku game state.
+     *
+     * @param badGrid 9x9 array bad numbers state
+     * @param outTextGrid 9x9 fxml textfields
      */
     static void renderBadNumbers(ArrayList<ArrayList<Integer>> badGrid, ArrayList<ArrayList<TextField>> outTextGrid) {
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
@@ -538,7 +560,9 @@ public class SudokuController {
     }
 
     /**
-     * @param outTextGrid
+     * The game is completed. Render all numbers as solved.
+     *
+     * @param outTextGrid 9x9 array fxml textfields
      */
     static void renderSolved(ArrayList<ArrayList<TextField>> outTextGrid) {
         for (int row = 0; row < Sudoku.ROW_SIZE; ++row) {
