@@ -254,11 +254,12 @@ public class SudokuController {
      */
     @FXML
     void initialize() {
-
-        assert mBtnNewGame != null : "fx:id=\"btnNewGame\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert mBtnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert mBtnLoad != null : "fx:id=\"btnLoad\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert mBtnExit != null : "fx:id=\"btnExit\" was not injected: check your FXML file 'sudoku.fxml'.";
+        assert mBtnExit != null : "fx:id=\"mBtnExit\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnNewGame != null : "fx:id=\"mBtnNewGame\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnSave != null : "fx:id=\"mBtnSave\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnLoad != null : "fx:id=\"mBtnLoad\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnLock != null : "fx:id=\"mBtnLock\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnUnlock != null : "fx:id=\"mBtnUnlock\" was not injected: check your FXML file 'View.fxml'.";
         assert mGridParent != null : "fx:id=\"mGridParent\" was not injected: check your FXML file 'View.fxml'.";
 
         mSudoku = new Sudoku();
