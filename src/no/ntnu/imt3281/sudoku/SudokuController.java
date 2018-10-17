@@ -25,33 +25,25 @@ import no.ntnu.imt3281.language.LanguageBundler;
  * SudokuController is responsible for the UI management of the sudoku game.
  */
 public class SudokuController {
-    /**
-     * fxml id
-     */
-    @FXML
-    Button mBtnNewGame;
 
-    /**
-     * fxml id
-     */
-    @FXML
-    Button mBtnSave;
-
-    /**
-     * fxml id
-     */
-    @FXML
-    Button mBtnLoad;
-
-    /**
-     * fxml id
-     */
     @FXML
     Button mBtnExit;
 
-    /**
-     * fxml id
-     */
+    @FXML
+    Button mBtnNewGame;
+
+    @FXML
+    Button mBtnSave;
+
+    @FXML
+    Button mBtnLoad;
+
+    @FXML
+    Button mBtnLock;
+
+    @FXML
+    Button mBtnUnlock;
+
     @FXML
     GridPane mGridParent;
 
@@ -147,15 +139,40 @@ public class SudokuController {
     }
 
     /**
-     * fxml event
+     * Button handler. Creates a random new game of easy difficulty, and loads 
+     * it into SudokuController and re-renders the scene.
+     *
+     * @param event fxml event object not used
      */
     @FXML
-    void onClickNewGame(ActionEvent event) {
+    void onClickNewEasyGame(ActionEvent event) {
 
-        mScene.getStylesheets().clear();
-        mScene.getStylesheets().add(this.getClass().getResource("View.css").toString());
+        try {
+            mSudoku = Sudoku.createSudokuOfDifficulty(Sudoku.Difficulty.EASY);
+        } catch (IOException e) {
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.generic.ioexception"), "");
+            return;
+        }
+        mBadGrid = SudokuController.makeBadGrid();
+        this.render();
+    }
 
-        System.out.println("OnClickNewGame");
+    /**
+     * Button-handler, creates a random new game of hard difficulty, 
+     * loads it into SudokuController and re-renders the scene.
+     *
+     * @param event fxml event object not used
+     */
+    @FXML
+    void onClickNewHardGame(ActionEvent event) {
+        try {
+            mSudoku = Sudoku.createSudokuOfDifficulty(Sudoku.Difficulty.HARD);
+        } catch (IOException e) {
+            reportErrorToUser(LanguageBundler.getBundle().getString("error.generic.ioexception"), "");
+            return;
+        }
+        mBadGrid = SudokuController.makeBadGrid();
+        this.render();
     }
 
     /**
@@ -237,11 +254,12 @@ public class SudokuController {
      */
     @FXML
     void initialize() {
-
-        assert mBtnNewGame != null : "fx:id=\"btnNewGame\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert mBtnSave != null : "fx:id=\"btnSave\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert mBtnLoad != null : "fx:id=\"btnLoad\" was not injected: check your FXML file 'sudoku.fxml'.";
-        assert mBtnExit != null : "fx:id=\"btnExit\" was not injected: check your FXML file 'sudoku.fxml'.";
+        assert mBtnExit != null : "fx:id=\"mBtnExit\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnNewGame != null : "fx:id=\"mBtnNewGame\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnSave != null : "fx:id=\"mBtnSave\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnLoad != null : "fx:id=\"mBtnLoad\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnLock != null : "fx:id=\"mBtnLock\" was not injected: check your FXML file 'View.fxml'.";
+        assert mBtnUnlock != null : "fx:id=\"mBtnUnlock\" was not injected: check your FXML file 'View.fxml'.";
         assert mGridParent != null : "fx:id=\"mGridParent\" was not injected: check your FXML file 'View.fxml'.";
 
         mSudoku = new Sudoku();
